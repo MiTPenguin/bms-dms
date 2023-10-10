@@ -1,0 +1,35 @@
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5          ✔ purrr   0.3.4     
+✔ tibble  3.1.5          ✔ dplyr   1.0.7     
+✔ tidyr   1.1.4          ✔ stringr 1.5.0.9000
+✔ readr   2.0.2          ✔ forcats 0.5.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+
+Attaching package: ‘magrittr’
+
+The following object is masked from ‘package:purrr’:
+
+    set_names
+
+The following object is masked from ‘package:tidyr’:
+
+    extract
+
+
+Attaching package: ‘data.table’
+
+The following objects are masked from ‘package:dplyr’:
+
+    between, first, last
+
+The following object is masked from ‘package:purrr’:
+
+    transpose
+
+Warning message:
+Expected 7 pieces. Missing pieces filled with `NA` in 48518 rows [5, 10, 12, 22, 33, 64, 67, 76, 106, 116, 119, 128, 135, 137, 175, 187, 227, 252, 253, 254, ...]. 
+NULL
+Joining, by = c("chunk", "clone")
+There were 35 warnings (use warnings() to see them)

@@ -1,1 +1,6 @@
-# bms-dms
+# BMS-Octant Deep Mutational Scanning
+
+Welcome! This repository contains summary statistics and analysis results for DMS datasets generated ny Octant and BMS.
+
+  -  <ins>TYK2</ins>: [Barcode Mapping](./markdown/TYK2-bcmap.md), [Assay](./markdown/TYK2-assay.md), [Analysis](./markdown/TYK2-analysis.md)
+  -  <ins>TYK2-VAMP</ins>: [Barcode Mapping](./markdown/TYK2-VAMP-bcmap.md), [Assay](./markdown/TYK2-VAMP-assay.md), [Analysis](./markdown/TYK2-VAMP-analysis.md)

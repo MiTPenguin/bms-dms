@@ -2,6 +2,7 @@
 
 | Title | Link |
 | --- | --- | 
+| Clinical and Genetic Variant Interpretation | [Report](../notebooks/TYK2-Variant-Interp-Flow.md) |
 | DMS-FlowDMS Score Calibration | [Report](../notebooks/TYK2-Calibration.md) |
 | DMS-FlowDMS Quantitative Contrast | [Report](../notebooks/TYK2-Signal-Stability-Contrast.md) |
 | Midpoint Inference for FlowDMS | [Report](../notebooks/TYK2-VAMPseq-Midpoint.md) |

@@ -1,0 +1,279 @@
+---
+title: TYK2 Full-Length FlowDMS Variant Interpretation
+output: github_document
+---
+
+1. [Allele Frequencies](#part1)
+2. [ClinVar](#part2)
+3. [EVE and ESM1b](#part3)
+4. [SIFT and Polyphen2](#part4)
+5. [AlphaMissense](#part5)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(
+  fig.path = "flowdms_variant_interpretation/",
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+
+library(here)
+library(ggpubr)
+library(ggsci)
+library(ggbeeswarm)
+library(tidyverse)
+library(patchwork)
+```
+
+```{r}
+# amino acid letter conversions
+aalet <- read_tsv(here::here("data" , "annotations" , "aa-letters.tsv"), col_names = c("full", "thr", "aa"))
+# tyk2 wt seq per base
+wtseq <- read_tsv(here::here("data" , "tyk2" , "tyk2-wt-aa.tsv"))
+
+# sumstats from midpoint model
+sumstats <- read_tsv(here::here("sumstats", "TYK2-VAMP", "run2", "OCNT-VAMPLIB-1-assay-run2-vampseq-midpoints.sumstats.tsv")) %>%
+    rename("aa" = "mut_aa") %>%
+    # join in WT aa
+    inner_join(wtseq, by = c("pos")) %>%
+    # join in aa names for mut seq
+    inner_join(aalet, by = c("aa")) %>%
+    # join in aa names for WT seq
+    inner_join(aalet, by = c("wt_aa" = "aa")) %>%
+    mutate(mut = paste0(thr.y, pos, thr.x))
+```
+
+#### Allele Frequencies <a name="part1"></a>
+
+Each variant has a population-level allele frequency, which we can plot for each global population for which we have data from Gnomad. In the plots below, red points are significant in the DMS data at an adjusted p-value < 0.01:
+
+```{r}
+# gnomad allele frequencies from ensembl VEP
+# pass in tyk2 vcf file prob generated against WT, makes it easy to get allele frequencies from different populations
+varinfo <- read_tsv(here::here("data", "annotations", "TYK2-vep.tsv.gz"), comment = "##") %>%
+    # filter for specific transcript and for missense mutations
+    filter(Feature == "ENST00000525621", grepl("missense", Consequence)) %>%
+    select(Protein_position, Amino_acids, matches("gnomAD")) %>%
+    pivot_longer(names_to = "group", values_to = "allele_frequency", matches("gnomAD")) %>%
+    filter(allele_frequency != "-") %>%
+    mutate(allele_frequency = as.numeric(allele_frequency)) %>%
+    group_by(Protein_position, Amino_acids, group) %>%
+    summarize(allele_frequency = sum(allele_frequency)) %>%
+    separate(Amino_acids, c("wt_aa", "mut_aa"), "/") %>%
+    rename("pos" = "Protein_position") %>%
+    mutate(pos = as.numeric(pos))
+
+# join in gnomad allele frequences for mut aa ?
+sumstats_vep <- sumstats %>%
+    inner_join(varinfo, by = c("pos" = "pos",
+                               "aa" = "mut_aa"))
+```
+
+```{r, fig.width = 12, fig.height = 5}
+#options(repr.plot.width = 12, repr.plot.height = 5)
+sumstats_vep %>%
+    ggplot() +
+        geom_point(aes(x = statistic,
+                       y = log10(allele_frequency),
+                       color = if_else(p.adj < 0.01, "red", "black")),
+                   alpha = 0.5) +
+        theme_pubr(base_size = 16) +
+        facet_wrap(~group, nrow = 2) +
+        xlab("DMS Z-Statistic") + ylab("log10(allele frequency)") +
+        scale_color_identity() +
+        ggtitle("FlowDMS + gnomAD")
+```
+
+#### ClinVar <a name="part2"></a>
+
+There are 316 missense variants in TYK2 noted in ClinVar, which we can compare to our data stratified by ClinVar classification from Benign to Pathogenic. Notably, P1104A is classified as Benign/Likely Benign, so there is not necessairly a strong expectation that our functional effects should associate strongly with a ClinVar class:
+
+```{r}
+tyk2_clinvar <- read_tsv(here::here("data", "annotations", "TYK2-clinvar-missense.tsv.gz")) %>%
+    select(Name, `Clinical significance (Last reviewed)`) %>%
+    rename("class" = "Clinical significance (Last reviewed)") %>%
+    separate(Name, c("id", "mut"), sep = " ") %>%
+    mutate(mut = gsub("\\(|\\)|p.","",mut),
+           class = gsub("\\(.*","",class)) %>%
+    select(-id) %>%
+    distinct()
+```
+
+```{r, fig.width = 10, fig.height = 5}
+sumstats %>%
+    left_join(tyk2_clinvar, by = "mut") %>%
+    mutate(class = if_else(is.na(class), "Not in Clinvar", class),
+           class = factor(class, levels = c("Not in Clinvar",
+                                            "Pathogenic",
+                                            "Conflicting interpretations of pathogenicity",
+                                            "Uncertain significance",
+                                            "Likely benign",
+                                            "Benign/Likely benign",
+                                            "Benign"))) %>%
+    ggplot(aes(y = statistic, x = fct_rev(class), color = class)) +
+        geom_quasirandom() +
+        theme_pubr(base_size = 16) +
+        ylab("DMS Z-Statistic") + xlab("") +
+        coord_flip() +
+        theme(legend.pos = "none") +
+        scale_color_igv() +
+        ggtitle("FlowDMS + Clinvar")
+```
+
+The vast majority of variants are either not in ClinVar, or are of uncertain significance. So, if we extract all variants NOT in either of those two categories, we can show them together in a table with the DMS adjusted p-value:
+
+```{r}
+sumstats %>%
+    left_join(tyk2_clinvar, by = "mut") %>%
+    mutate(class = if_else(is.na(class), "Not in Clinvar", class),
+           class = factor(class, levels = c("Not in Clinvar",
+                                            "Pathogenic",
+                                            "Conflicting interpretations of pathogenicity",
+                                            "Uncertain significance",
+                                            "Likely benign",
+                                            "Benign/Likely benign",
+                                            "Benign"))) %>%
+    filter(!class %in% c("Not in Clinvar", "Uncertain significance")) %>%
+    select(mut, class, p.adj) %>%
+    arrange(class) %>%
+    rename("mutation" = "mut",
+           "ClinVar category" = "class",
+           "DMS adjusted p-value" = "p.adj") %>%
+    knitr::kable("markdown")
+```
+
+#### EVE and ESM1b <a name="part3"></a>
+
+EVE (both scores from the Marks lab) and ESB1b have extremely similar patterns:
+
+```{r}
+eve_scores_b05 <- read_csv(here::here("data", "annotations", "TYK2_HUMAN_b05_20000_samples.csv")) %>%
+    mutate(mutations = gsub("^.","",mutations)) %>%
+    select(-protein_name) %>%
+    filter(mutations != "t") %>%
+    separate(mutations, c("pos", "aa"), sep = -1) %>%
+    rename("EVE Score 1" = "evol_indices") %>%
+    mutate(pos = as.numeric(pos))
+
+eve_scores_b03 <- read_csv(here::here("data", "annotations", "TYK2_HUMAN_b03_20000_samples.csv")) %>%
+    mutate(mutations = gsub("^.","",mutations)) %>%
+    select(-protein_name) %>%
+    filter(mutations != "t") %>%
+    separate(mutations, c("pos", "aa"), sep = -1) %>%
+    rename("EVE Score 2" = "evol_indices") %>%
+    mutate(pos = as.numeric(pos))
+
+eve_scores <- inner_join(eve_scores_b05, eve_scores_b03, by = c("pos", "aa"))
+```
+
+```{r, fig.width = 10, fig.height = 5}
+sumstats %>%
+    inner_join(eve_scores, by = c("pos", "aa")) %>%
+    pivot_longer(names_to = "stat", values_to = "eve_score", `EVE Score 1`:`EVE Score 2`) %>%
+    ggplot() +
+        geom_point(aes(x = statistic, y = eve_score), alpha = 0.4) +
+        theme_pubr(base_size = 20) +
+        facet_wrap(~stat, nrow = 1) +
+        xlab("DMS Z-Statistic") + ylab("EVE Score") +
+        ggtitle("FlowDMS + EVE")
+```
+
+```{r}
+esm1b <- read_csv(here::here("data", "annotations", "TYK2-ESM1b.csv")) %>%
+    mutate(wt_aa = str_sub(variant, 1, 1),
+           mut_aa = str_sub(variant, -1))
+```
+
+```{r,fig.width=6, fig.height=6}
+sumstats %>%
+    inner_join(esm1b, by = c("pos" = "pos",
+                             "aa" = "mut_aa")) %>%
+    ggplot() +
+        geom_point(aes(x = statistic, y = score))  +
+        theme_pubr(base_size = 20) +
+        xlab("DMS Z-Statistic") + ylab("ESM1b Score") +
+        ggtitle("FlowDMS + ESM1b")
+```
+
+#### SIFT and PolyPhen2 <a name="part4"></a>
+
+The older predictors also have L-shaped patterns, though with visibly lower resolution to distinguish between similar variants:
+
+```{r}
+tyk2_sift <- read_delim(here::here("data", "annotations", "TYK2-sift.tsv.gz"), delim = " ") %>%
+    pivot_longer(names_to = "aa", values_to = "sift", A:Y) %>%
+    mutate(mut = paste0(wt, aa)) %>%
+    select(mut, sift)
+
+tyk2_polyp <- read_tsv(here::here("data", "annotations", "TYK2-polyphen2.tsv.gz")) %>%
+    select(o_pos, o_aa2, pph2_prob) %>%
+    rename("PolyPhen2" = "pph2_prob")
+
+sumstats_siftphen <- sumstats %>%
+    mutate(mut = paste0(pos, wt_aa, aa)) %>%
+    left_join(tyk2_sift, by = "mut") %>%
+    left_join(tyk2_polyp, by = c("pos" = "o_pos",
+                                 "aa" = "o_aa2"))
+```
+
+```{r}
+sumstats_siftphen %>%
+    ggplot() +
+        geom_point(aes(x = statistic, y = sift))  +
+        theme_pubr(base_size = 20) +
+        xlab("DMS Z-Statistic") + ylab("SIFT Score") +
+        ggtitle("FlowDMS + SIFT")
+```
+
+```{r}
+sumstats_siftphen %>%
+    ggplot() +
+        geom_point(aes(x = statistic, y = PolyPhen2))  +
+        theme_pubr(base_size = 20) +
+        xlab("DMS Z-Statistic") + ylab("PolyPhen2 Score") +
+        ggtitle("FlowDMS + PolyPhen2")
+```
+
+#### AlphaMissense <a name="part5"></a>
+
+Comparing AlphaMissense variant effect predictions with TYK2 VAMP-seq for all 17 chunks.
+
+```{r}
+sumstats_vamp <- read_tsv("../sumstats/TYK2-VAMP/midpoint/vamp-10-midpoint-sumstats.tsv") %>%
+    inner_join(wtseq, by = c("pos")) 
+```
+
+```{r}
+alphamissense <- read_tsv(here::here("data", "annotations", "tyk2-alphamissense.tsv"),
+                          col_names = c("uniprot_id" ,"mut_id", "score", "AlphaMissense Class"))
+```
+
+```{r}
+p1 <- sumstats %>%
+    mutate(mut_id = str_c(wt_aa, pos, aa)) %>%
+    left_join(alphamissense) %>%
+    ggplot() +
+        geom_point(aes(y = estimate, x = score, color = `AlphaMissense Class`)) +
+        theme_pubr() +
+        ylab("FlowDMS Estimated Midpoint Shift") +
+        xlab("Alpha-Missense Score") +
+        scale_color_manual(values = c("pathogenic" = "blue", "ambiguous" = "red", "benign" = "darkgreen"))
+
+p2 <- sumstats %>%
+    mutate(mut_id = str_c(wt_aa, pos, aa)) %>%
+    left_join(alphamissense) %>% 
+    mutate(`AlphaMissense Class` = factor(`AlphaMissense Class`, levels = c("benign", "ambiguous", "pathogenic"))) %>%
+    filter(!is.na(`AlphaMissense Class`)) %>%
+    ggplot() +
+        geom_quasirandom(aes(y = estimate, x = `AlphaMissense Class`, color = `AlphaMissense Class`)) +
+        geom_boxplot(aes(y = estimate, x = `AlphaMissense Class`, color = `AlphaMissense Class`), width = 0.2) +
+        theme_pubr() +
+        ylab("FlowDMS Estimated Midpoint Shift") +
+        xlab("Alpha-Missense Predicted Class") +
+        scale_color_manual(values = c("pathogenic" = "blue", "ambiguous" = "red", "benign" = "darkgreen"))
+```
+
+```{r fig.width=15, fig.height=7}
+p1 + p2 + plot_annotation(title = 'FlowDMS All Chunks + AlphaMissense')
+```
+

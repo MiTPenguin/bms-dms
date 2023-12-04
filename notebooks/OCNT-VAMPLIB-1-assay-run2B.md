@@ -9,17 +9,17 @@ FlowDMS Assay Report
 
 ### Barcode Sequencing Distributions <a name="part1"></a>
 
-![](OCNT-VAMPLIB-1-assay-run3_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](OCNT-VAMPLIB-1-assay-run3_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
+![](OCNT-VAMPLIB-1-assay-run2A_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](OCNT-VAMPLIB-1-assay-run2A_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
 
 To get a sense of positional distribution, we can show the same data as
 lineplots across the length of TYK2. Below is an example using the first
 sample; the remaining plots can be found [here](./coverage-plots):
 
-![](OCNT-VAMPLIB-1-assay-run3_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](OCNT-VAMPLIB-1-assay-run2A_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
-![](OCNT-VAMPLIB-1-assay-run3_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](OCNT-VAMPLIB-1-assay-run2A_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-![](OCNT-VAMPLIB-1-assay-run3_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](OCNT-VAMPLIB-1-assay-run2A_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ### Variant Effect Profiles and Midpoints <a name="part2"></a>
 
@@ -43,12 +43,12 @@ sample; the remaining plots can be found [here](./coverage-plots):
 | 8     | 0.6619626 |               0.0050299 |
 | 9     | 0.6675519 |               0.0063069 |
 
-![](OCNT-VAMPLIB-1-assay-run3_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](OCNT-VAMPLIB-1-assay-run2A_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
-![](OCNT-VAMPLIB-1-assay-run3_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](OCNT-VAMPLIB-1-assay-run2A_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
-![](OCNT-VAMPLIB-1-assay-run3_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](OCNT-VAMPLIB-1-assay-run2A_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
-![](OCNT-VAMPLIB-1-assay-run3_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](OCNT-VAMPLIB-1-assay-run2A_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
-![](OCNT-VAMPLIB-1-assay-run3_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](OCNT-VAMPLIB-1-assay-run2A_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->

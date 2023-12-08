@@ -11,7 +11,7 @@ The columns in DMS_IFNalpha100vsUntreated_rescaled.tsv are:
     - Position: TYK2 amino acid position
     - AA: Amino acid
     - Log2FoldChange: Estimated effect size, log2 scale
-    - StandardError: Standard error of the Log2FoldChange
+    - Log2FoldChangeError: Standard error of the Log2FoldChange
     - FDR: Benjamini-Hochberg-adjusted p-values
     - ScaledScore: 0-1 rescaled score
     - ScaledScore_Lower: Lower 95% confidence boundary for the ScaledScore
@@ -24,7 +24,6 @@ The columns in FlowDMS_midpoints_rescaled.tsv.tsv are:
     - Midpoint: Estimated sorting bin midpoint
     - Midpoint_Lower: Lower 95% confidence boundary for the Midpoint
     - Midpoint_Upper: Upper 95% confidence boundary for the Midpoint
-    - FDR: Benjamini-Hochberg-adjusted p-values
     - ScaledScore: 0-1 rescaled score
     - ScaledScore_Lower: Lower 95% confidence boundary for the ScaledScore
     - ScaledScore_Upper: Upper 95% confidence boundary for the ScaledScore

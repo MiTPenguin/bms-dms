@@ -8,6 +8,7 @@
 | Complete TYK2 Barcode Map | [Report](../notebooks/TYK2-Complete-Barcode-Map.md) |
 | Differential Expression by TYK2 Genotype (RNA-seq) | [Report](../notebooks/TYK2-Differential-Expression.md) |
 | DMS-FlowDMS Score Calibration | [Report](../notebooks/TYK2-Calibration.md) |
+| Global DMS-FlowDMS Rescaled Comparison | [Report](../notebooks/TYK2-Rescale-Global.md) |
 | IL-23 Raw Data Review | [Report](../notebooks/TYK2-IL23-Signal.md) |
 | Library Diversity Quality Control | [Report](../notebooks/TYK2-Lib-Div-QC.md) |
 | Meta-Analysis Across Drug Concentrations | [Report](../notebooks/TYK2-Sumstat-MetaConc.md) |

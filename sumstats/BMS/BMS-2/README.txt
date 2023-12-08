@@ -1,8 +1,8 @@
-TYK2 DMS and FlowDMS Rescaled Scores
+TYK2 IFNa DMS and Expression DMS Rescaled Scores
 
-There are two TSV files, one each for DMS and FlowDMS summary statistics which have been re-scaled into 0-1 scores. Each row contains summary statistics for a single variant, and can be joined on the first three columns noted below.
+There are two TSV files, one each for the IFNa DMS and the expression DMS summary statistics, which have been re-scaled into 0-1 scores. Each row contains summary statistics for a single variant, and can be joined on the first three columns noted below.
 
-For DMS, we use the normalized summary statistics from run 7, IFN-alpha 100 U/mL minus Untreated. For FlowDMS, we use the most recent midpoints computed from run 2.For both datasets, a score of zero corresponds to the average stop, and a score of one corresponds to wild-type.
+For INFa DMS, we use the normalized summary statistics from run 7, IFN-alpha 100 U/mL minus Untreated. For Expression DMS, we use the most recent midpoints computed from run 2. For both datasets, a score of zero corresponds to the average stop, and a score of one corresponds to wild-type.
 
 NOTE: these scores are not bounded by 0 and 1, but rather those are the reference points for Stop and Wild-Type, respectively.
 
@@ -17,7 +17,7 @@ The columns in DMS_IFNalpha100vsUntreated_rescaled.tsv are:
     - ScaledScore_Lower: Lower 95% confidence boundary for the ScaledScore
     - ScaledScore_Upper: Upper 95% confidence boundary for the ScaledScore
 
-The columns in FlowDMS_midpoints_rescaled.tsv.tsv are:
+The columns in ExpressionDMS_midpoints_rescaled.tsv are:
     - Chunk: TYK2 library segment
     - Position: TYK2 amino acid position
     - AA: Amino acid

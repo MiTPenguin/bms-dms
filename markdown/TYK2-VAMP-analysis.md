@@ -8,3 +8,4 @@
 | Global DMS-FlowDMS Rescaled Comparison | [Report](../notebooks/TYK2-Rescale-Global.md) |
 | Midpoint Inference for FlowDMS | [Report](../notebooks/TYK2-VAMPseq-Midpoint.md) |
 | Multi-Assay Integration (DMS and FlowDMS) | [Report](../notebooks/TYK2-MultiAssay-Integration.md) |
+| Offset Comparisons | [Report](../notebooks/TYK2-FlowDMS-Offsets.md) |

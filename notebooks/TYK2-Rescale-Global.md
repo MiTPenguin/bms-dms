@@ -7,3 +7,15 @@ For BMS, we want to convert both the DMS and FlowDMS data to a 0-1 scale for int
 ![png](TYK2-Rescale-Global_files/TYK2-Rescale-Global_4_0.png)
     
 
+
+
+    
+![png](TYK2-Rescale-Global_files/TYK2-Rescale-Global_7_0.png)
+    
+
+
+
+    
+![png](TYK2-Rescale-Global_files/TYK2-Rescale-Global_8_0.png)
+    
+

@@ -11,3 +11,5 @@
 | OCNT-DMSLIB-1-run7-bcmap | 1, 7, 9, 11 | [Report](../notebooks/OCNT-DMSLIB-1-run7-bcmap.md) |
 | OCNT-DMSLIB-1-run8-bcmap | 11, 12 | [Report](../notebooks/OCNT-DMSLIB-1-run8-bcmap.md) |
 | OCNT-DMSLIB-1-run9-bcmap | 9, 13, 14 | [Report](../notebooks/OCNT-DMSLIB-1-run9-bcmap.md) |
+| OCNT-DMSLIB-4-run1-bcmap | 10, 16, 16(DL7), 16(DL7 EP) | [Report](../notebooks/240207_VH00964_44_AAAYC2LM5-bcmap.md) |
+| OCNT-DMSLIB-4-run1-bcmap-rerun | 16 | [Report](../notebooks/240207_VH00964_44_AAAYC2LM5_rerun-bcmap.md) |

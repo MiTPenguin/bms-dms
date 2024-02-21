@@ -119,7 +119,9 @@ bcmap = "pipeline/240207_VH00964_44_AAAYC2LM5_rerun/"
 
     
     
-
+    |sample             |final barcode count |
+    |:------------------|:-------------------|
+    |16.bcmap-final.tsv |1819083             |
 
 
 ### Library Complexity and Coverage <a name="part4"></a>

@@ -3,19 +3,18 @@ title: IL23 Mini DMS Assay
 output: github_document
 ---
 
-
 1. [Barcode Sequencing Distributions](#part1)
 2. [Inference and Stop Codon Effects](#part2)
 3. [Visualizations](#part3)
 4. [Contrasts](#part4)
-
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(
   fig.path = "IL23_min_figs/",
   echo = FALSE,
   warning = FALSE,
-  message = FALSE
+  message = FALSE,
+  dev = c("png", "pdf")
 )
 library(magrittr)
 library(data.table)

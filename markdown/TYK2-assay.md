@@ -17,4 +17,4 @@
 | ------- | ---- | ----------- | --- |
 | OCNT-DMSLIB-1-assay-run6 | Mini | <ul><li>Genomic DNA</li><li>Untreated</li><li>IL-23 100 ng/mL</li></ul> | [Report](../notebooks/OCNT-DMSLIB-1-assay-run6.md) |
 | OCNT-DMSLIB-1-assay-run9 | Mini | <ul><li>Untreated</li><li>IL-23 1 ng/mL</li><li>IL-23 10 ng/mL</li><li>IL-23 10 ng/mL + Itacitinib</li></ul> | [Report](../notebooks/OCNT-DMSLIB-1-assay-run9.md) |
-| OCNT-DMSLIB-1-assay-run10 | Mini | <ul><li>Untreated</li><li>IL-23 75 ng/mL</li> | [Report](../notebooks/IL23_mini_assay.md) |
+| OCNT-DMSLIB-1-assay-run10 | Mini | <ul><li>Untreated</li><li>IL-23 75 ng/mL</li> | [Initial Report](../notebooks/IL23_mini_assay.md), [JRC Review](../notebooks/TYK2-IL23-run10-refine.md) |

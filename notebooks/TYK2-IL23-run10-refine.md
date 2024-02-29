@@ -8,38 +8,49 @@
 ### Heatmaps
 
 
-    
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_3_0.png)
-    
-
-
-
-    
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_3_1.png)
-    
-
+```R
+ggcorrplot(cor(log(wide_counts[,-1] %>% filter(rowSums(. > 100) >= 4))), lab = TRUE)
+```
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_3_2.png)
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_2_0.png)
     
 
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_3_3.png)
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_0.png)
     
 
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_3_4.png)
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_1.png)
     
 
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_3_5.png)
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_2.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_3.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_4.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_5.png)
     
 
 
@@ -47,13 +58,13 @@
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_7_0.png)
-    
-
-
-
-    
 ![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_8_0.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_9_0.png)
     
 
 
@@ -61,7 +72,7 @@
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_11_0.png)
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_12_0.png)
     
 
 
@@ -81,6 +92,12 @@
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_16_0.png)
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_17_0.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_17_1.png)
     
 

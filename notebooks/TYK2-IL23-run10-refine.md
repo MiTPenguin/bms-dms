@@ -8,26 +8,49 @@
 ### Heatmaps
 
 
-    
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_3_0.png)
-    
-
-
-
-    
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_3_1.png)
-    
-
+```R
+ggcorrplot(cor(log(wide_counts[,-1] %>% filter(rowSums(. > 100) >= 4))), lab = TRUE)
+```
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_3_2.png)
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_2_0.png)
     
 
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_3_3.png)
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_0.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_1.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_2.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_3.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_4.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_4_5.png)
     
 
 
@@ -35,13 +58,13 @@
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_7_0.png)
-    
-
-
-
-    
 ![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_8_0.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_9_0.png)
     
 
 
@@ -49,7 +72,7 @@
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_11_0.png)
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_12_0.png)
     
 
 
@@ -65,4 +88,16 @@
     |     1091|H  |              -0.2205913|             0.2998932|          -0.7355662|          -0.3693397|         0.1336696|       -2.763079|
     |     1091|Q  |               0.2725681|             0.3518843|           0.7745959|          -0.3057679|         0.1511334|       -2.023166|
     |     1099|M  |               0.0263139|             0.3717268|           0.0707883|          -0.2966237|         0.1450674|       -2.044730|
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_17_0.png)
+    
+
+
+
+    
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_17_1.png)
+    
 

@@ -81,6 +81,6 @@
 
 
     
-![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_15_0.png)
+![png](TYK2-IL23-run10-refine_files/TYK2-IL23-run10-refine_16_0.png)
     
 

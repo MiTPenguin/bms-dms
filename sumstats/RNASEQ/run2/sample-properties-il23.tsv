@@ -32,7 +32,7 @@ sample_id	group	cytokine	dosage	time
 31	P1104A	IFNa	low	t24
 32	P1104A	IFNa	low	t24
 33	WT	IL10	low	t24
-34	WT	IL10	low	t24	
+34	WT	IL10	low	t24
 35	P1104A	IL10	low	t24
 36	P1104A	IL10	low	t24
 37	WT	IL23	high	t24

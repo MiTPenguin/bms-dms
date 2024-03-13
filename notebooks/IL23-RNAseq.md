@@ -273,7 +273,7 @@ sumstats %>%
 
 
 ```R
-sumstats <- read_tsv( "../sumstats/RNASEQ/run2/deseq2-sumstats-vs-none.tsv")
+sumstats <- read_tsv( "../sumstats/RNASEQ/run2/deseq2-sumstats-vs-none.tsv.gz")
 split_sumstats <- sumstats %>%
     mutate(group = case_when(padj == 1 ~ "FDR = 1",
                              padj < 0.01 ~ "FDR < 0.01",
@@ -552,5 +552,57 @@ plot_gene("SOCS3") +
 
     
 ![png](IL23-RNAseq_files/IL23-RNAseq_30_0.png)
+    
+
+
+
+```R
+plot_gene_vsd <- function(gene_id) {
+
+    the_plot <- vsd_gene %>%
+        filter(gene == gene_id) %>%
+        mutate(dosage = relevel(as.factor(dosage), ref = "low")) %>%
+        ggplot() +
+            geom_point(aes(x = dosage,
+                           y = norm_value,
+                           color = time),
+                       size = 3,
+                       position = position_dodge(width = 0.4)) +
+            theme_pubr(base_size = 16,
+                       x.text.angle = 45) +
+            ggtitle(gene_id) +
+            facet_grid(cols = vars(cytokine, group))
+
+    return(the_plot)
+    
+}
+
+options(repr.plot.width = 22, repr.plot.height = 6)
+plot_gene_vsd("STAT1") + 
+    plot_gene_vsd("STAT2") +
+    plot_gene_vsd("STAT3")
+plot_gene_vsd("JAK1") + 
+    plot_gene_vsd("JAK2") +
+    plot_gene_vsd("JAK3")
+plot_gene_vsd("SOCS3") + 
+    plot_gene_vsd("BCL3") +
+    plot_gene_vsd("NFIL3")
+```
+
+
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_31_0.png)
+    
+
+
+
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_31_1.png)
+    
+
+
+
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_31_2.png)
     
 

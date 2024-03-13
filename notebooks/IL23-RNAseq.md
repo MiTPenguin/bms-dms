@@ -313,6 +313,81 @@ options(repr.plot.width = 20, repr.plot.height = 20, warn = -1)
 volcano_grid
 ```
 
+
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_19_0.png)
+    
+
+
+
+```R
+options(repr.plot.width = 10, repr.plot.height = 5)
+split_sumstats  %>%
+    filter(group == "FDR < 0.01") %>%
+    group_by(background, cytokine, dosage, time) %>%
+    count(group, .drop = FALSE) %>%
+    ggplot() +
+        geom_bar(aes(x = dosage,
+                     y = n,
+                     fill = time),
+                 position = position_dodge(0.5),
+                 width = 0.5,
+                 stat = "identity")  +
+        facet_grid(cols = vars(cytokine, background)) +
+        theme_pubr(base_size = 16)
+
+split_sumstats  %>%
+    filter(group == "FDR < 0.01") %>%
+    group_by(background, cytokine, dosage, time) %>%
+    count(group, .drop = FALSE) %>%
+    select(-group) %>%
+    arrange(time, cytokine, rev(background), dosage) %>%
+    rename("FDR < 0.01 vs Untreated" = "n")
+```
+
+
+<table class="dataframe">
+<caption>A grouped_df: 24 × 5</caption>
+<thead>
+	<tr><th scope=col>background</th><th scope=col>cytokine</th><th scope=col>dosage</th><th scope=col>time</th><th scope=col>FDR &lt; 0.01 vs Untreated</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>WT    </td><td>IFNa</td><td>low </td><td>t6 </td><td>1532</td></tr>
+	<tr><td>WT    </td><td>IFNa</td><td>high</td><td>t6 </td><td>2058</td></tr>
+	<tr><td>P1104A</td><td>IFNa</td><td>low </td><td>t6 </td><td>2095</td></tr>
+	<tr><td>P1104A</td><td>IFNa</td><td>high</td><td>t6 </td><td>2900</td></tr>
+	<tr><td>WT    </td><td>IL10</td><td>low </td><td>t6 </td><td>1098</td></tr>
+	<tr><td>WT    </td><td>IL10</td><td>high</td><td>t6 </td><td>   2</td></tr>
+	<tr><td>P1104A</td><td>IL10</td><td>low </td><td>t6 </td><td>2082</td></tr>
+	<tr><td>P1104A</td><td>IL10</td><td>high</td><td>t6 </td><td> 302</td></tr>
+	<tr><td>WT    </td><td>IL23</td><td>low </td><td>t6 </td><td>2212</td></tr>
+	<tr><td>WT    </td><td>IL23</td><td>high</td><td>t6 </td><td>2129</td></tr>
+	<tr><td>P1104A</td><td>IL23</td><td>low </td><td>t6 </td><td>2499</td></tr>
+	<tr><td>P1104A</td><td>IL23</td><td>high</td><td>t6 </td><td>2975</td></tr>
+	<tr><td>WT    </td><td>IFNa</td><td>low </td><td>t24</td><td>  32</td></tr>
+	<tr><td>WT    </td><td>IFNa</td><td>high</td><td>t24</td><td>  65</td></tr>
+	<tr><td>P1104A</td><td>IFNa</td><td>low </td><td>t24</td><td>   8</td></tr>
+	<tr><td>P1104A</td><td>IFNa</td><td>high</td><td>t24</td><td>  57</td></tr>
+	<tr><td>WT    </td><td>IL10</td><td>low </td><td>t24</td><td>   0</td></tr>
+	<tr><td>WT    </td><td>IL10</td><td>high</td><td>t24</td><td>  17</td></tr>
+	<tr><td>P1104A</td><td>IL10</td><td>low </td><td>t24</td><td>   0</td></tr>
+	<tr><td>P1104A</td><td>IL10</td><td>high</td><td>t24</td><td> 778</td></tr>
+	<tr><td>WT    </td><td>IL23</td><td>low </td><td>t24</td><td> 603</td></tr>
+	<tr><td>WT    </td><td>IL23</td><td>high</td><td>t24</td><td> 607</td></tr>
+	<tr><td>P1104A</td><td>IL23</td><td>low </td><td>t24</td><td> 436</td></tr>
+	<tr><td>P1104A</td><td>IL23</td><td>high</td><td>t24</td><td> 464</td></tr>
+</tbody>
+</table>
+
+
+
+
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_20_1.png)
+    
+
+
 #### Differentially Expressed Genes <a name="part4"></a>
 
 
@@ -361,7 +436,7 @@ Heatmap(t(as.matrix(vsd_gene_wide_sig[,-1])),
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_22_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_23_0.png)
     
 
 
@@ -389,7 +464,7 @@ Heatmap(t(heat_data),show_row_names = FALSE,
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_23_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_24_0.png)
     
 
 
@@ -411,7 +486,6 @@ plot_gene <- function(gene_id) {
             theme_pubr(base_size = 16,
                        x.text.angle = 45) +
             ggtitle(gene_id) +
-            #coord_cartesian(ylim = c(-0.5, 3)) +
             geom_hline(yintercept = 0) +
             facet_grid(cols = vars(cytokine, background))
 
@@ -438,13 +512,13 @@ jak1 + jak2 + jak3
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_26_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_27_0.png)
     
 
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_26_1.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_27_1.png)
     
 
 
@@ -458,6 +532,6 @@ plot_gene("SOCS3") +
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_27_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_28_0.png)
     
 

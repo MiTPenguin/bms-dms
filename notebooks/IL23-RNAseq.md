@@ -216,6 +216,13 @@ rownames(de_prop) <- de_prop$sample_id
 
 
 ```R
+raw_counts <- de_data
+names(raw_counts)[-1] <- str_c(de_prop$covariate, "_", de_prop$rep)
+write_tsv(raw_counts, "../sumstats/RNASEQ/run2/raw-counts.tsv")
+```
+
+
+```R
 deobj_counts <- DESeqDataSetFromMatrix(countData = de_data %>% select(-gene),
     colData = de_prop,
     design = ~covariate)
@@ -247,7 +254,9 @@ sumstats <- map2_dfr(norm_result,
                                             as_tibble(.x),
                                             "condition" = .y))
 
-write_tsv(sumstats, "../sumstats/RNASEQ/run2/deseq2-sumstats-vs-none.tsv")
+sumstats %>%
+    separate(condition, c("background", "cytokine", "dosage", "time"), "_") %>%
+    write_tsv("../sumstats/RNASEQ/run2/deseq2-sumstats-vs-none.tsv")
 ```
 
 
@@ -257,8 +266,8 @@ split_sumstats <- sumstats %>%
     mutate(group = case_when(padj == 1 ~ "FDR = 1",
                              padj < 0.01 ~ "FDR < 0.01",
                              TRUE ~ "NS")) %>%
-    separate(condition, c("background", "cytokine", "dosage", "time")) %>%
-    mutate(time = relevel(as.factor(time), ref = "t6"))
+    mutate(time = relevel(as.factor(time), ref = "t6"),
+           dosage = relevel(as.factor(dosage), ref = "low"))
 
 ma_grid <- split_sumstats %>%
     ggplot() +
@@ -281,7 +290,7 @@ ma_grid
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_17_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_18_0.png)
     
 
 
@@ -297,7 +306,8 @@ volcano_grid <- split_sumstats %>%
                    cols = vars(cytokine, background)) +
         scale_color_manual(values = c("FDR = 1" = "gray",
                                       "NS" = "black",
-                                      "FDR < 0.01" = "red"))
+                                      "FDR < 0.01" = "red")) +
+        coord_cartesian(ylim = c(0, 50))
 
 options(repr.plot.width = 20, repr.plot.height = 20, warn = -1)
 volcano_grid
@@ -340,6 +350,7 @@ vsd_gene_wide_all <- vsd_gene %>%
 ```R
 options(repr.plot.width = 13.5, repr.plot.height = 12)
 Heatmap(t(as.matrix(vsd_gene_wide_sig[,-1])),
+        column_title = "Top 500 Most Variable Genes",
         cluster_columns = TRUE,
         cluster_rows = FALSE,
         row_split = gsub(" .*", "", names(vsd_gene_wide_sig[,-1])),
@@ -350,7 +361,7 @@ Heatmap(t(as.matrix(vsd_gene_wide_sig[,-1])),
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_21_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_22_0.png)
     
 
 
@@ -364,20 +375,16 @@ de_genes_sig <- split_sumstats %>%
 heat_genes_wide <- vsd_gene_wide_all[vsd_gene_wide_all$gene %in% de_genes_sig,]
 heat_data <- t(as.matrix(heat_genes_wide[,-1]))
 colnames(heat_data) <- unlist(heat_genes_wide[,1])
-```
 
-
-```R
 options(repr.plot.width = 10, repr.plot.height = 15)
-#pdf("heat-immune-genes.pdf", width = 13.5, height = 25)
 Heatmap(t(heat_data),show_row_names = FALSE,
         cluster_columns = FALSE,
         cluster_rows = TRUE,
         column_split = gsub("low |high |t6|t24| 1| 2| none", "", colnames(heat_genes_wide[,-1])),
         use_raster = TRUE,
         column_title_rot = 45,
-        name = "Variance\nStabilized\nLog-Mean")
-#dev.off()
+        name = "Variance\nStabilized\nLog-Mean",
+        row_title = "Genes DE vs None in any condition\nwith Log2FoldChange > 1 and FDR < 0.01")
 ```
 
 
@@ -392,17 +399,21 @@ Heatmap(t(heat_data),show_row_names = FALSE,
 ```R
 plot_gene <- function(gene_id) {
 
-    the_plot <- sumstats %>%
+    the_plot <- split_sumstats %>%
         filter(gene == gene_id) %>%
+        mutate(dosage = relevel(as.factor(dosage), ref = "low")) %>%
         ggplot() +
-            geom_pointrange(aes(x = cytokine,
+            geom_pointrange(aes(x = dosage,
                                 y = log2FoldChange,
                                 ymin = log2FoldChange - 2*lfcSE,
-                                ymax = log2FoldChange + 2*lfcSE)) +
-            theme_pubr(base_size = 16) +
+                                ymax = log2FoldChange + 2*lfcSE,
+                                color = time), position = position_dodge(width = 0.4)) +
+            theme_pubr(base_size = 16,
+                       x.text.angle = 45) +
             ggtitle(gene_id) +
-            coord_cartesian(ylim = c(-0.5, 3)) +
-            geom_hline(yintercept = 0)
+            #coord_cartesian(ylim = c(-0.5, 3)) +
+            geom_hline(yintercept = 0) +
+            facet_grid(cols = vars(cytokine, background))
 
     return(the_plot)
     
@@ -420,27 +431,33 @@ jak3 <- plot_gene("JAK3")
 
 
 ```R
-options(repr.plot.width = 15, repr.plot.height = 6)
+options(repr.plot.width = 20, repr.plot.height = 6)
 stat1 + stat2 + stat3
 jak1 + jak2 + jak3
 ```
 
 
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_26_0.png)
+    
+
+
+
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_26_1.png)
+    
+
+
+
 ```R
-options(repr.plot.width = 10, repr.plot.height = 6)
-vsd_gene %>%
-    filter(gene == "ISG15") %>%
-    mutate(time = relevel(as.factor(time), ref = "t6"),
-           dosage = relevel(as.factor(dosage), ref = "low")) %>%
-    ggplot() +
-        geom_point(aes(x = time,
-                       y = norm_value,
-                       color = group), position = position_jitter(width = 0.1),
-                   size = 3) +
-        facet_wrap(~cytokine + dosage, nrow = 1) +
-        theme_pubr(base_size = 16) +
-        scale_color_manual(name = "",
-                           values = c("WT" = "black",
-                                      "P1104A" = "red")) +
-        ggtitle("ISG15")
+options(repr.plot.width = 20, repr.plot.height = 6)
+plot_gene("SOCS3") + 
+    plot_gene("BCL3") +
+    plot_gene("NFIL3")
 ```
+
+
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_27_0.png)
+    
+

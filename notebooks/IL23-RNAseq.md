@@ -2,7 +2,7 @@
 
 1. [Dataset Properties](#part1)
 2. [Unsupervised Profiles](#part2)
-3. [Statisticla Modeling](#part3)
+3. [Statistical Modeling](#part3)
 4. [Differentially Expressed Genes](#part4)
 5. [Gene Visualizations](#part5)
 

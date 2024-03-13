@@ -223,6 +223,18 @@ write_tsv(raw_counts, "../sumstats/RNASEQ/run2/raw-counts.tsv")
 
 
 ```R
+log2_cpm <- raw_counts %>%
+    pivot_longer(names_to = "sample", values_to = "count", -gene) %>%
+    group_by(sample) %>%
+    mutate(count = log2(count * 1000000 / sum(count, na.rm = TRUE)),
+           count = if_else(is.infinite(count), NA, count)) %>%
+    pivot_wider(names_from = sample, values_from = count)
+
+write_tsv(log2_cpm, "../sumstats/RNASEQ/run2/log2-cpm.tsv")
+```
+
+
+```R
 deobj_counts <- DESeqDataSetFromMatrix(countData = de_data %>% select(-gene),
     colData = de_prop,
     design = ~covariate)
@@ -261,7 +273,7 @@ sumstats %>%
 
 
 ```R
-sumstats <- read_tsv( "../sumstats/RNASEQ/run2/deseq2-sumstats-vs-none.tsv")
+sumstats <- read_tsv( "../sumstats/RNASEQ/run2/deseq2-sumstats-vs-none.tsv.gz")
 split_sumstats <- sumstats %>%
     mutate(group = case_when(padj == 1 ~ "FDR = 1",
                              padj < 0.01 ~ "FDR < 0.01",
@@ -290,7 +302,7 @@ ma_grid
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_18_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_19_0.png)
     
 
 
@@ -315,7 +327,7 @@ volcano_grid
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_19_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_20_0.png)
     
 
 
@@ -384,7 +396,7 @@ split_sumstats  %>%
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_20_1.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_21_1.png)
     
 
 
@@ -423,6 +435,13 @@ vsd_gene_wide_all <- vsd_gene %>%
 
 
 ```R
+vsd_format <- vsd_gene_wide_all
+names(vsd_format)[-1] <- gsub(" ", "_", names(vsd_format)[-1])
+vsd_format %>% write_tsv("../sumstats/RNASEQ/run2/deseq2-variance-stabilized-quants.tsv")
+```
+
+
+```R
 options(repr.plot.width = 13.5, repr.plot.height = 12)
 Heatmap(t(as.matrix(vsd_gene_wide_sig[,-1])),
         column_title = "Top 500 Most Variable Genes",
@@ -436,7 +455,7 @@ Heatmap(t(as.matrix(vsd_gene_wide_sig[,-1])),
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_23_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_25_0.png)
     
 
 
@@ -464,7 +483,7 @@ Heatmap(t(heat_data),show_row_names = FALSE,
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_24_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_26_0.png)
     
 
 
@@ -512,13 +531,13 @@ jak1 + jak2 + jak3
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_27_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_29_0.png)
     
 
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_27_1.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_29_1.png)
     
 
 
@@ -532,6 +551,58 @@ plot_gene("SOCS3") +
 
 
     
-![png](IL23-RNAseq_files/IL23-RNAseq_28_0.png)
+![png](IL23-RNAseq_files/IL23-RNAseq_30_0.png)
+    
+
+
+
+```R
+plot_gene_vsd <- function(gene_id) {
+
+    the_plot <- vsd_gene %>%
+        filter(gene == gene_id) %>%
+        mutate(dosage = relevel(as.factor(dosage), ref = "low")) %>%
+        ggplot() +
+            geom_point(aes(x = dosage,
+                           y = norm_value,
+                           color = time),
+                       size = 3,
+                       position = position_dodge(width = 0.4)) +
+            theme_pubr(base_size = 16,
+                       x.text.angle = 45) +
+            ggtitle(gene_id) +
+            facet_grid(cols = vars(cytokine, group))
+
+    return(the_plot)
+    
+}
+
+options(repr.plot.width = 22, repr.plot.height = 6)
+plot_gene_vsd("STAT1") + 
+    plot_gene_vsd("STAT2") +
+    plot_gene_vsd("STAT3")
+plot_gene_vsd("JAK1") + 
+    plot_gene_vsd("JAK2") +
+    plot_gene_vsd("JAK3")
+plot_gene_vsd("SOCS3") + 
+    plot_gene_vsd("BCL3") +
+    plot_gene_vsd("NFIL3")
+```
+
+
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_31_0.png)
+    
+
+
+
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_31_1.png)
+    
+
+
+
+    
+![png](IL23-RNAseq_files/IL23-RNAseq_31_2.png)
     
 

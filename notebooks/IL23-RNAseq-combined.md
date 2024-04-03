@@ -3,12 +3,15 @@
 
 ```R
 library(ggpubr)
+library(tximport)
 library(DESeq2)
 library(ggcorrplot)
 library(furrr)
 library(ggbiplot)
+library(fs)
 library(patchwork)
 library(GGally)
+library(rhdf5)
 library(ComplexHeatmap)
 library(tidyverse)
 ```
@@ -641,3 +644,231 @@ Heatmap(t(as.matrix(vsd_gene_wide_sig[,-1])),
 ![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_36_1.png)
     
 
+
+#### Results from Kallisto Quantifications
+
+
+```R
+tx2gene_df <- read_tsv("../data/reference/hg38/kallisto/gencode.v41.pc_transcripts.luciferase.tx2gene.tsv")
+abundance_files <- dir_ls(path = "../pipeline/RNASEQ/diffexp/kallisto/",
+                          regexp = ".*_kallisto/abundance.h5",
+                          recurse = TRUE)
+names(abundance_files) <- gsub("../pipeline/RNASEQ/diffexp/kallisto/|_kallisto/abundance.h5",
+                               "",
+                               abundance_files)
+```
+
+    [1mRows: [22m[34m110224[39m [1mColumns: [22m[34m2[39m
+    [36m──[39m [1mColumn specification[22m [36m────────────────────────────────────────────────────────[39m
+    [1mDelimiter:[22m "\t"
+    [31mchr[39m (2): ENST00000641515.2, OR4F5
+    
+    [36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+    [36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+
+
+```R
+kallisto_import <- tximport(abundance_files,
+                            type = "kallisto",
+                            tx2gene = tx2gene_df,
+                            ignoreAfterBar = TRUE)
+```
+
+    1 
+    2 
+    3 
+    4 
+    5 
+    6 
+    7 
+    8 
+    9 
+    10 
+    11 
+    12 
+    13 
+    14 
+    15 
+    16 
+    17 
+    18 
+    19 
+    20 
+    21 
+    22 
+    23 
+    24 
+    25 
+    26 
+    27 
+    28 
+    29 
+    30 
+    31 
+    32 
+    33 
+    34 
+    35 
+    36 
+    37 
+    38 
+    39 
+    40 
+    41 
+    42 
+    43 
+    44 
+    45 
+    46 
+    47 
+    48 
+    49 
+    50 
+    51 
+    52 
+    53 
+    54 
+    55 
+    56 
+    
+    
+    transcripts missing from tx2gene: 1
+    
+    summarizing abundance
+    
+    summarizing counts
+    
+    summarizing length
+    
+
+
+
+```R
+abundances <- as_tibble(kallisto_import$abundance) %>%
+    mutate(gene = rownames(kallisto_import$abundance)) %>%
+    pivot_longer(names_to = "sample", values_to = "abundance", -gene)
+
+de_prop <- samp_prop %>%
+    filter(!is.na(cytokine)) %>%
+    arrange(covariate)
+rownames(de_prop) <- str_c(de_prop$sample_id, "_", de_prop$covariate)
+
+de_prop <- de_prop %>% arrange(match(rownames(de_prop), colnames(kallisto_import$counts)))
+```
+
+    Warning message:
+    “Setting row names on a tibble is deprecated.”
+
+
+
+```R
+deobj_counts <- DESeqDataSetFromTximport(kallisto_import,
+    colData = de_prop,
+    design = ~covariate)
+```
+
+
+```R
+deresult <- DESeq(deobj_counts)
+```
+
+    estimating size factors
+    
+    using 'avgTxLength' from assays(dds), correcting for library size
+    
+    estimating dispersions
+    
+    gene-wise dispersion estimates
+    
+    mean-dispersion relationship
+    
+    final dispersion estimates
+    
+    fitting model and testing
+    
+
+
+
+```R
+cov_group <- de_prop %>%
+    filter(!grepl("none", covariate)) %>%
+    distinct(covariate) %>%
+    pull(covariate) %>%
+    as.character()
+
+none_group <- gsub("IFNa|IL10|IL23|low|high", "none", cov_group) %>%
+    as.character()
+
+plan(multicore, workers = 25)
+norm_result <- future_map2(.x = cov_group,
+                    .y = none_group,
+                    ~results(deresult,
+                             contrast = c("covariate", .x, .y),
+                             independentFiltering = FALSE))
+```
+
+
+```R
+sumstats <- map2_dfr(norm_result,
+                     cov_group,
+                     ~bind_cols("gene" = rownames(kallisto_import$counts),
+                                            as_tibble(.x),
+                                            "condition" = .y))
+```
+
+
+```R
+sumstats %>%
+    separate(condition, c("background", "cytokine", "dosage", "time"), "_") %>%
+    write_tsv("../sumstats/RNASEQ/run2/combined/deseq2-kallisto-sumstats-vs-none.tsv")
+```
+
+
+```R
+split_sumstats <- sumstats %>%
+    separate(condition, c("background", "cytokine", "dosage", "time"), "_") %>%
+    mutate(group = case_when(padj == 1 ~ "FDR = 1",
+                             padj < 0.01 ~ "FDR < 0.01",
+                             TRUE ~ "NS")) %>%
+    mutate(time = relevel(as.factor(time), ref = "t6"),
+           dosage = relevel(as.factor(dosage), ref = "low"))
+
+ma_grid <- split_sumstats %>%
+    ggplot() +
+        geom_point(aes(x = log2(baseMean),
+                       y = log2FoldChange,
+                       color = group)) +
+        theme_pubr(base_size = 15) +
+        facet_grid(rows = vars(dosage, time),
+                   cols = vars(cytokine, background)) +
+        scale_color_manual(values = c("FDR = 1" = "gray",
+                                      "NS" = "black",
+                                      "FDR < 0.01" = "red"))
+```
+
+
+```R
+options(repr.plot.width = 15, repr.plot.height = 15)
+ma_grid
+```
+
+    Warning message:
+    “[1m[22mRemoved 55416 rows containing missing values (`geom_point()`).”
+
+
+
+    
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_47_1.png)
+    
+
+
+
+```R
+
+```
+
+
+```R
+
+```

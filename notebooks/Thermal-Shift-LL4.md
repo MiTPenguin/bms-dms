@@ -78,22 +78,17 @@ all_plots <- pmap(.l = list(data_with_params$data,
      .f = plot_assay)
 ```
 
-    [1mRows: [22m[34m192[39m [1mColumns: [22m[34m5[39m
-    [36m──[39m [1mColumn specification[22m [36m────────────────────────────────────────────────────────[39m
-    [1mDelimiter:[22m "\t"
-    [31mchr[39m (1): Variant
-    [32mdbl[39m (4): Temperature, Run, Area TYK2, Area GAPDH
-    
-    [36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
-    [36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
-    [1m[22mJoining with `by = join_by(Run)`
-
-
 
 ```R
 options(repr.plot.width = 15, repr.plot.height = 15, warn = -1)
 wrap_plots(all_plots)
 ```
+
+
+    
+![png](Thermal-Shift-LL4_files/Thermal-Shift-LL4_3_0.png)
+    
+
 
 
 ```R

@@ -1,5 +1,10 @@
 ### Thermal Shift Western LL4 Models
 
+LL4 model fits and plots for thermal shift western data obtained from WT and TYK2-P1104A cell lines:
+
+  -  [Raw Data](../validation/20240404_bulk_TSA_data.tsv)
+  -  [LL4 Parameters](../validation/20240404_bulk_TSA_ll4_parameters.tsv)
+
 
 ```R
 library(ggpubr)
@@ -114,3 +119,14 @@ tidy(drc_models) %>%
 ![png](Thermal-Shift-LL4_files/Thermal-Shift-LL4_4_0.png)
     
 
+
+
+```R
+drc_params %>%
+    unnest() %>%
+    rename("Slope" = "b",
+           "Emin" = "c",
+           "Emax" = "d",
+           "EC50" = "e") %>%
+    write_tsv("../validation/20240404_bulk_TSA_ll4_parameters.tsv")
+```

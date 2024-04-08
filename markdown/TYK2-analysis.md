@@ -19,3 +19,4 @@
 | Replicate Subsampling | [Report](../notebooks/TYK2-Rep-Subsample.md) |
 | Structural and Biophysical Integrations | [Report](../notebooks/TYK2-Struct-Integr.md) |
 | Synthesis and Sequencing Errors  | [Report](../notebooks/TYK2-Synth-Seq-Errors.md) |
+| Thermal Shift Pseudo-DRCs | [Report](../notebooks/Thermal-Shift-LL4.md) |

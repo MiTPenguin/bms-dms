@@ -68,7 +68,7 @@ flow_sumstats <- read_tsv(flow_files, id = "n", show_col_types = FALSE) %>%
            n = factor(n, levels = c("n3", "n5", "n8", "n10", "n15")),
            aa = if_else(aa %in% c("X", "*"), "Stop", aa))
 
-options(repr.plot.width = 15, repr.plot.height = 8)
+options(repr.plot.width = 15, repr.plot.height = 10)
 flow_sumstats %>% 
     ggplot() +
             geom_tile(aes(x = pos, y = fct_rev(aa), fill =statistic)) +
@@ -163,15 +163,15 @@ joined <- inner_join(dms_join, flow_join, by = join_by(n, pos, aa))
 
 
 ```R
-options(repr.plot.width = 12, repr.plot.height = 5)
+options(repr.plot.width = 15, repr.plot.height = 5)
 joined %>%
     ggplot() +
         geom_point(aes(x = dms_statistic,
-                       y = midpoint_statistic), alpha = 0.2) +
+                       y = midpoint_statistic), shape = 1, alpha = 0.3) +
         theme_pubr(base_size = 15) +
-        facet_wrap(~n) +
-        coord_cartesian(xlim = c(-15, 5),
-                        ylim = c(-20, 5))
+        facet_wrap(~n, nrow = 1) +
+        coord_cartesian(xlim = c(-10, 5),
+                        ylim = c(-17.5, 2.5))
 ```
 
 
@@ -179,8 +179,3 @@ joined %>%
 ![png](TYK2-FlowDMS-DMS-Subsample_files/TYK2-FlowDMS-DMS-Subsample_10_0.png)
     
 
-
-
-```R
-
-```

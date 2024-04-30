@@ -1,5 +1,12 @@
 ### TYK2 IL-23 RNA-seq Assay Combined Analysis
 
+1. [Dataset Properties](#part1)
+2. [Unsupervised Profiles](#part2)
+3. [Statistical Modeling](#part3)
+4. [DEG Heatmaps](#part4)
+5. [Results from Kallisto Quantifications](#part5)
+6. [WT vs P1104A Direct Comparisons](#part6)
+
 
 ```R
 library(ggpubr)
@@ -534,54 +541,6 @@ sumstats_il10 %>%
 
 
 ```R
-options(repr.plot.width = 8, repr.plot.height = 6)
-vsd_format <- read_tsv("../sumstats/RNASEQ/run2/combined/deseq2-variance-stabilized-quants.tsv.gz")
-vsd_format %>%
-    filter(gene == "OAS1") %>%
-    pivot_longer(names_to = "sample",
-                 values_to = "count",
-                 -gene) %>%
-    filter(grepl("t6", sample), grepl("low|none", sample)) %>%
-    ggplot() +
-        geom_point(aes(x = sample, y = count), stat = "identity") +
-        coord_flip() +
-        theme_pubr(base_size = 20) +
-        ggtitle("OAS1")
-```
-
-    [1mRows: [22m[34m60607[39m [1mColumns: [22m[34m57[39m
-    [36m──[39m [1mColumn specification[22m [36m────────────────────────────────────────────────────────[39m
-    [1mDelimiter:[22m "\t"
-    [31mchr[39m  (1): gene
-    [32mdbl[39m (56): IFNa_high_P1104A_t24_1, IFNa_high_P1104A_t24_2, IFNa_high_P1104A_t...
-    
-    [36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
-    [36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-
-
-    
-![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_29_1.png)
-    
-
-
-
-```R
-
-```
-
-
-```R
-
-```
-
-
-```R
-
-```
-
-
-```R
 cov_group <- de_prop %>%
     filter(!grepl("none", covariate)) %>%
     distinct(covariate) %>%
@@ -640,7 +599,7 @@ ma_grid
 
 
     
-![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_35_0.png)
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_31_0.png)
     
 
 
@@ -665,7 +624,7 @@ volcano_grid
 
 
     
-![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_36_0.png)
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_32_0.png)
     
 
 
@@ -736,19 +695,19 @@ sumstats_marg_dose_wide %>%
 
 
     
-![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_39_0.png)
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_35_0.png)
     
 
 
 
     
-![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_39_1.png)
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_35_1.png)
     
 
 
 
     
-![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_39_2.png)
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_35_2.png)
     
 
 
@@ -759,7 +718,7 @@ ggpairs(sumstats_marg_dose_wide[,2:4], upper = NULL)
 
 
     
-![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_40_0.png)
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_36_0.png)
     
 
 
@@ -770,76 +729,11 @@ ggpairs(sumstats_marg_dose_wide[,5:7], upper = NULL)
 
 
     
-![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_41_0.png)
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_37_0.png)
     
 
 
-
-```R
-sumstats_marg_dose_wide %>%
-    arrange(-WT_IL10) %>%
-    head(10)
-```
-
-
-<table class="dataframe">
-<caption>A tibble: 10 × 7</caption>
-<thead>
-	<tr><th scope=col>gene</th><th scope=col>P1104A_IFNa</th><th scope=col>P1104A_IL10</th><th scope=col>P1104A_IL23</th><th scope=col>WT_IFNa</th><th scope=col>WT_IL10</th><th scope=col>WT_IL23</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>PIM2  </td><td>2.124315</td><td>4.587469</td><td>11.998500</td><td>5.625667</td><td>4.176378</td><td>16.529604</td></tr>
-	<tr><td>TFDP2 </td><td>5.667282</td><td>4.078956</td><td> 5.315371</td><td>4.595962</td><td>3.186488</td><td> 5.421322</td></tr>
-	<tr><td>GVINP1</td><td>5.050956</td><td>2.315285</td><td> 3.412359</td><td>6.509803</td><td>3.086291</td><td> 4.240134</td></tr>
-	<tr><td>LYRM7 </td><td>5.907984</td><td>4.688827</td><td> 6.377483</td><td>4.905800</td><td>3.084944</td><td> 5.440464</td></tr>
-	<tr><td>STAT3 </td><td>4.333774</td><td>5.374815</td><td>10.744343</td><td>5.102312</td><td>3.048512</td><td> 9.734332</td></tr>
-	<tr><td>GUCD1 </td><td>4.191879</td><td>3.369569</td><td> 4.608511</td><td>5.266288</td><td>3.006026</td><td> 4.449300</td></tr>
-	<tr><td>CRCP  </td><td>2.937008</td><td>2.393677</td><td> 3.933511</td><td>4.044725</td><td>2.989337</td><td> 4.478554</td></tr>
-	<tr><td>GNL2  </td><td>3.724021</td><td>2.933552</td><td> 5.425862</td><td>3.957386</td><td>2.764499</td><td> 5.640857</td></tr>
-	<tr><td>BRCC3 </td><td>4.120881</td><td>3.076480</td><td> 5.186462</td><td>3.743955</td><td>2.756610</td><td> 4.972321</td></tr>
-	<tr><td>CLPB  </td><td>5.381783</td><td>4.376700</td><td> 4.671957</td><td>5.060909</td><td>2.751558</td><td> 5.884119</td></tr>
-</tbody>
-</table>
-
-
-
-
-```R
-sumstats_marg_dose_wide %>%
-    arrange(-WT_IL23) %>%
-    head(10)
-```
-
-
-<table class="dataframe">
-<caption>A tibble: 10 × 7</caption>
-<thead>
-	<tr><th scope=col>gene</th><th scope=col>P1104A_IFNa</th><th scope=col>P1104A_IL10</th><th scope=col>P1104A_IL23</th><th scope=col>WT_IFNa</th><th scope=col>WT_IL10</th><th scope=col>WT_IL23</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>STAT1  </td><td>23.599133</td><td>5.015615</td><td>19.144494</td><td>27.980124</td><td>2.724917</td><td>19.298509</td></tr>
-	<tr><td>PIM2   </td><td> 2.124315</td><td>4.587469</td><td>11.998500</td><td> 5.625667</td><td>4.176378</td><td>16.529604</td></tr>
-	<tr><td>PARP9  </td><td>16.032478</td><td>2.510165</td><td>11.442415</td><td>22.571785</td><td>1.880742</td><td>12.008471</td></tr>
-	<tr><td>FNIP2  </td><td> 3.014875</td><td>4.434060</td><td>10.963870</td><td> 2.845747</td><td>2.475783</td><td>11.970651</td></tr>
-	<tr><td>STAT3  </td><td> 4.333774</td><td>5.374815</td><td>10.744343</td><td> 5.102312</td><td>3.048512</td><td> 9.734332</td></tr>
-	<tr><td>BCL3   </td><td> 1.401788</td><td>2.725364</td><td> 7.306666</td><td> 2.580103</td><td>2.028368</td><td> 9.052718</td></tr>
-	<tr><td>PPP2R2B</td><td> 1.903606</td><td>2.334381</td><td> 8.500779</td><td> 2.350946</td><td>1.369216</td><td> 8.968227</td></tr>
-	<tr><td>NPHP4  </td><td> 3.323257</td><td>3.759732</td><td> 8.380475</td><td> 2.956448</td><td>2.139827</td><td> 8.392867</td></tr>
-	<tr><td>IL2RA  </td><td> 4.935191</td><td>3.299908</td><td> 9.509920</td><td> 4.653971</td><td>2.575930</td><td> 8.263397</td></tr>
-	<tr><td>RNF144A</td><td> 4.734620</td><td>2.886194</td><td> 7.110421</td><td> 5.383636</td><td>1.170984</td><td> 8.229390</td></tr>
-</tbody>
-</table>
-
-
-
-
-```R
-
-```
-
-#### Differentially Expressed Genes <a name="part4"></a>
+#### DEG Heatmaps <a name="part4"></a>
 
 
 ```R
@@ -895,11 +789,11 @@ Heatmap(t(as.matrix(vsd_gene_wide_sig[,-1])),
 
 
     
-![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_47_1.png)
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_40_1.png)
     
 
 
-#### Results from Kallisto Quantifications
+#### Results from Kallisto Quantifications <a name="part5"></a>
 
 
 ```R
@@ -1113,16 +1007,230 @@ ma_grid
 
 
     
-![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_58_1.png)
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_51_1.png)
+    
+
+
+#### WT vs P1104A Direct Comparisons <a name="part6"></a>
+
+
+```R
+deobj_counts <- DESeqDataSetFromMatrix(countData = de_data %>% select(-gene),
+    colData = de_prop,
+    design = ~ -1 + covariate)
+
+deresult <- DESeq(deobj_counts)
+```
+
+    converting counts to integer mode
+    
+    estimating size factors
+    
+    estimating dispersions
+    
+    gene-wise dispersion estimates
+    
+    mean-dispersion relationship
+    
+    final dispersion estimates
+    
+    fitting model and testing
     
 
 
 
 ```R
+extract_results <- function(deo, c_vec, genes){
 
+    res <- as_tibble(results(deo, contrast = c_vec)) %>%
+        mutate("comparison" = str_c(c_vec[2], " minus ", c_vec[3]))
+
+    res$gene <- genes
+    
+    return(res)
+}
 ```
 
 
 ```R
-
+wt_vs_p1104a_sumstats <- bind_rows(
+    extract_results(deresult, c("covariate", "WT_none_none_t6", "P1104A_none_none_t6"), de_data$gene),
+    extract_results(deresult, c("covariate", "WT_none_none_t24", "P1104A_none_none_t24"), de_data$gene),
+    extract_results(deresult, c("covariate", "WT_IL10_low_t6", "P1104A_IL10_low_t6"), de_data$gene),
+    extract_results(deresult, c("covariate", "WT_IL10_low_t24", "P1104A_IL10_low_t24"), de_data$gene),
+    extract_results(deresult, c("covariate", "WT_IL23_low_t6", "P1104A_IL23_low_t6"), de_data$gene),
+    extract_results(deresult, c("covariate", "WT_IL23_low_t24", "P1104A_IL23_low_t24"), de_data$gene),
+    extract_results(deresult, c("covariate", "WT_IFNa_low_t6", "P1104A_IFNa_low_t6"), de_data$gene),
+    extract_results(deresult, c("covariate", "WT_IFNa_low_t24", "P1104A_IFNa_low_t24"), de_data$gene)
+)
 ```
+
+
+```R
+write_tsv(wt_vs_p1104a_sumstats, "../sumstats/RNASEQ/run2/combined/deseq2-wt-vs-p1104a-sumstats.tsv.gz")
+```
+
+
+```R
+options(repr.plot.width = 18, repr.plot.height = 6)
+wt_vs_p1104a_sumstats %>%
+    mutate(comparison = gsub(" ", "\n", comparison)) %>%
+    ggplot() +
+        geom_point(aes(x = log2FoldChange,
+                       y = -log10(pvalue))) +
+        theme_pubr(base_size = 15) +
+        facet_wrap(~comparison, nrow = 1)
+```
+
+    Warning message:
+    “[1m[22mRemoved 200016 rows containing missing values (`geom_point()`).”
+
+
+
+    
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_57_1.png)
+    
+
+
+
+```R
+wt_vs_p1104a_sumstats %>%
+    filter(stat < 0) %>%
+    arrange(padj) %>%
+    head(n=20)
+```
+
+
+<table class="dataframe">
+<caption>A tibble: 20 × 8</caption>
+<thead>
+	<tr><th scope=col>baseMean</th><th scope=col>log2FoldChange</th><th scope=col>lfcSE</th><th scope=col>stat</th><th scope=col>pvalue</th><th scope=col>padj</th><th scope=col>comparison</th><th scope=col>gene</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td> 928.4987</td><td>-3.212814</td><td>0.10812670</td><td>-29.71342</td><td>5.151421e-194</td><td>7.040447e-190</td><td>WT_none_none_t6 minus P1104A_none_none_t6  </td><td>ADGRL3</td></tr>
+	<tr><td> 928.4987</td><td>-3.592270</td><td>0.12361248</td><td>-29.06074</td><td>1.125872e-185</td><td>1.538729e-181</td><td>WT_IL10_low_t6 minus P1104A_IL10_low_t6    </td><td>ADGRL3</td></tr>
+	<tr><td> 928.4987</td><td>-3.296144</td><td>0.11932107</td><td>-27.62416</td><td>5.705523e-168</td><td>7.797738e-164</td><td>WT_IFNa_low_t6 minus P1104A_IFNa_low_t6    </td><td>ADGRL3</td></tr>
+	<tr><td> 928.4987</td><td>-3.059708</td><td>0.11281252</td><td>-27.12206</td><td>5.409804e-162</td><td>7.393579e-158</td><td>WT_IL23_low_t6 minus P1104A_IL23_low_t6    </td><td>ADGRL3</td></tr>
+	<tr><td> 928.4987</td><td>-3.212308</td><td>0.12472661</td><td>-25.75479</td><td>2.848807e-146</td><td>3.893465e-142</td><td>WT_IL10_low_t24 minus P1104A_IL10_low_t24  </td><td>ADGRL3</td></tr>
+	<tr><td> 928.4987</td><td>-2.925051</td><td>0.11521686</td><td>-25.38735</td><td>3.478500e-142</td><td>4.522746e-138</td><td>WT_IL23_low_t24 minus P1104A_IL23_low_t24  </td><td>ADGRL3</td></tr>
+	<tr><td>2027.4328</td><td>-1.841146</td><td>0.07281660</td><td>-25.28470</td><td>4.706233e-141</td><td>3.216004e-137</td><td>WT_IFNa_low_t6 minus P1104A_IFNa_low_t6    </td><td>IL7R  </td></tr>
+	<tr><td> 928.4987</td><td>-2.954225</td><td>0.11929471</td><td>-24.76409</td><td>2.186211e-135</td><td>2.842512e-131</td><td>WT_IFNa_low_t24 minus P1104A_IFNa_low_t24  </td><td>ADGRL3</td></tr>
+	<tr><td> 928.4987</td><td>-3.023423</td><td>0.12292586</td><td>-24.59550</td><td>1.411408e-133</td><td>1.835112e-129</td><td>WT_none_none_t24 minus P1104A_none_none_t24</td><td>ADGRL3</td></tr>
+	<tr><td> 676.0837</td><td>-2.842996</td><td>0.11579829</td><td>-24.55128</td><td>4.191020e-133</td><td>2.863933e-129</td><td>WT_none_none_t6 minus P1104A_none_none_t6  </td><td>CTNNA2</td></tr>
+	<tr><td> 693.0451</td><td>-3.099206</td><td>0.12743804</td><td>-24.31931</td><td>1.224889e-130</td><td>7.963000e-127</td><td>WT_none_none_t24 minus P1104A_none_none_t24</td><td>CNTN1 </td></tr>
+	<tr><td> 676.0837</td><td>-2.998029</td><td>0.12327845</td><td>-24.31917</td><td>1.229255e-130</td><td>8.400113e-127</td><td>WT_IL23_low_t6 minus P1104A_IL23_low_t6    </td><td>CTNNA2</td></tr>
+	<tr><td> 693.0451</td><td>-2.602969</td><td>0.10753790</td><td>-24.20513</td><td>1.964426e-129</td><td>1.277074e-125</td><td>WT_IL23_low_t24 minus P1104A_IL23_low_t24  </td><td>CNTN1 </td></tr>
+	<tr><td>2027.4328</td><td>-1.642783</td><td>0.06811246</td><td>-24.11869</td><td>1.591882e-128</td><td>7.252086e-125</td><td>WT_none_none_t6 minus P1104A_none_none_t6  </td><td>IL7R  </td></tr>
+	<tr><td> 693.0451</td><td>-2.408119</td><td>0.10002125</td><td>-24.07608</td><td>4.452202e-128</td><td>1.521206e-124</td><td>WT_none_none_t6 minus P1104A_none_none_t6  </td><td>CNTN1 </td></tr>
+	<tr><td>2027.4328</td><td>-1.725272</td><td>0.07276198</td><td>-23.71118</td><td>2.765027e-124</td><td>1.889481e-120</td><td>WT_IL10_low_t6 minus P1104A_IL10_low_t6    </td><td>IL7R  </td></tr>
+	<tr><td> 676.0837</td><td>-2.664068</td><td>0.11497938</td><td>-23.16997</td><td>9.147265e-119</td><td>6.250783e-115</td><td>WT_IL10_low_t24 minus P1104A_IL10_low_t24  </td><td>CTNNA2</td></tr>
+	<tr><td> 676.0837</td><td>-2.922076</td><td>0.12639474</td><td>-23.11865</td><td>3.006128e-118</td><td>1.369492e-114</td><td>WT_IFNa_low_t6 minus P1104A_IFNa_low_t6    </td><td>CTNNA2</td></tr>
+	<tr><td> 676.0837</td><td>-2.764365</td><td>0.12289772</td><td>-22.49321</td><td>4.836600e-112</td><td>2.203394e-108</td><td>WT_IL10_low_t6 minus P1104A_IL10_low_t6    </td><td>CTNNA2</td></tr>
+	<tr><td> 693.0451</td><td>-2.664139</td><td>0.11841178</td><td>-22.49894</td><td>4.251112e-112</td><td>2.763648e-108</td><td>WT_IFNa_low_t24 minus P1104A_IFNa_low_t24  </td><td>CNTN1 </td></tr>
+</tbody>
+</table>
+
+
+
+
+```R
+wt_vs_p1104a_sumstats %>%
+    filter(stat > 0) %>%
+    arrange(padj) %>%
+    head(n=20)
+```
+
+
+<table class="dataframe">
+<caption>A tibble: 20 × 8</caption>
+<thead>
+	<tr><th scope=col>baseMean</th><th scope=col>log2FoldChange</th><th scope=col>lfcSE</th><th scope=col>stat</th><th scope=col>pvalue</th><th scope=col>padj</th><th scope=col>comparison</th><th scope=col>gene</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>26469.1253</td><td>1.1748733</td><td>0.05474640</td><td>21.46028</td><td>3.660610e-102</td><td>1.000591e-98</td><td>WT_none_none_t6 minus P1104A_none_none_t6  </td><td>TFRC    </td></tr>
+	<tr><td>  790.8882</td><td>1.7342168</td><td>0.09252185</td><td>18.74386</td><td> 2.172672e-78</td><td>3.711738e-75</td><td>WT_none_none_t6 minus P1104A_none_none_t6  </td><td>ATXN7L3B</td></tr>
+	<tr><td>26469.1253</td><td>0.9758476</td><td>0.05492797</td><td>17.76595</td><td> 1.297244e-70</td><td>3.545887e-67</td><td>WT_IFNa_low_t6 minus P1104A_IFNa_low_t6    </td><td>TFRC    </td></tr>
+	<tr><td>26469.1253</td><td>0.9705687</td><td>0.05494558</td><td>17.66418</td><td> 7.915141e-70</td><td>1.545375e-66</td><td>WT_IL10_low_t6 minus P1104A_IL10_low_t6    </td><td>TFRC    </td></tr>
+	<tr><td>26469.1253</td><td>0.9585084</td><td>0.05486558</td><td>17.47012</td><td> 2.419690e-68</td><td>4.724272e-65</td><td>WT_IL23_low_t6 minus P1104A_IL23_low_t6    </td><td>TFRC    </td></tr>
+	<tr><td>  139.2160</td><td>3.7776301</td><td>0.21817976</td><td>17.31430</td><td> 3.669478e-67</td><td>7.951758e-64</td><td>WT_none_none_t24 minus P1104A_none_none_t24</td><td>SH2D1B  </td></tr>
+	<tr><td> 6802.9291</td><td>1.2231130</td><td>0.07381727</td><td>16.56947</td><td> 1.158447e-61</td><td>1.583250e-58</td><td>WT_none_none_t6 minus P1104A_none_none_t6  </td><td>EID1    </td></tr>
+	<tr><td> 1082.7333</td><td>1.4205613</td><td>0.08949679</td><td>15.87276</td><td> 9.783937e-57</td><td>1.485745e-53</td><td>WT_IL23_low_t6 minus P1104A_IL23_low_t6    </td><td>TAF7    </td></tr>
+	<tr><td>  167.5455</td><td>5.5695582</td><td>0.35138767</td><td>15.85018</td><td> 1.401768e-56</td><td>2.278224e-53</td><td>WT_none_none_t24 minus P1104A_none_none_t24</td><td>SAMSN1  </td></tr>
+	<tr><td> 1082.7333</td><td>1.3306686</td><td>0.08416941</td><td>15.80941</td><td> 2.679682e-56</td><td>2.817170e-53</td><td>WT_none_none_t6 minus P1104A_none_none_t6  </td><td>TAF7    </td></tr>
+	<tr><td>  167.5455</td><td>5.7828039</td><td>0.37166910</td><td>15.55901</td><td> 1.382164e-54</td><td>1.996766e-51</td><td>WT_IL23_low_t24 minus P1104A_IL23_low_t24  </td><td>SAMSN1  </td></tr>
+	<tr><td>  790.8882</td><td>1.4713271</td><td>0.09492137</td><td>15.50048</td><td> 3.442904e-54</td><td>5.228241e-51</td><td>WT_IFNa_low_t6 minus P1104A_IFNa_low_t6    </td><td>ATXN7L3B</td></tr>
+	<tr><td> 1432.8358</td><td>1.2818676</td><td>0.08315644</td><td>15.41513</td><td> 1.295042e-53</td><td>1.179956e-50</td><td>WT_none_none_t6 minus P1104A_none_none_t6  </td><td>PNMA1   </td></tr>
+	<tr><td>26469.1253</td><td>0.8385463</td><td>0.05495974</td><td>15.25747</td><td> 1.468422e-52</td><td>1.909242e-49</td><td>WT_IL23_low_t24 minus P1104A_IL23_low_t24  </td><td>TFRC    </td></tr>
+	<tr><td>26469.1253</td><td>0.8359538</td><td>0.05495318</td><td>15.21211</td><td> 2.939196e-52</td><td>3.474130e-49</td><td>WT_none_none_t24 minus P1104A_none_none_t24</td><td>TFRC    </td></tr>
+	<tr><td> 1082.7333</td><td>1.3308090</td><td>0.08850534</td><td>15.03648</td><td> 4.234603e-51</td><td>5.787432e-48</td><td>WT_IFNa_low_t6 minus P1104A_IFNa_low_t6    </td><td>TAF7    </td></tr>
+	<tr><td> 1082.7333</td><td>1.3463893</td><td>0.08950131</td><td>15.04324</td><td> 3.823904e-51</td><td>5.806811e-48</td><td>WT_IL10_low_t6 minus P1104A_IL10_low_t6    </td><td>TAF7    </td></tr>
+	<tr><td>26469.1253</td><td>0.8227941</td><td>0.05532518</td><td>14.87196</td><td> 5.012043e-50</td><td>9.785656e-47</td><td>WT_IL10_low_t24 minus P1104A_IL10_low_t24  </td><td>TFRC    </td></tr>
+	<tr><td>  638.1558</td><td>1.5119115</td><td>0.10272275</td><td>14.71837</td><td> 4.913543e-49</td><td>4.914299e-46</td><td>WT_IL23_low_t24 minus P1104A_IL23_low_t24  </td><td>REPS2   </td></tr>
+	<tr><td>26469.1253</td><td>0.8065559</td><td>0.05519279</td><td>14.61343</td><td> 2.306142e-48</td><td>2.725860e-45</td><td>WT_IFNa_low_t24 minus P1104A_IFNa_low_t24  </td><td>TFRC    </td></tr>
+</tbody>
+</table>
+
+
+
+
+```R
+vsd <- assay(vst(deresult, blind = FALSE))
+vsd <- cbind(vsd, "row_var" = rowVars(vsd, na.rm = TRUE))
+
+vsd_gene <- bind_cols("gene" = de_data$gene,
+                      vsd) %>%
+    pivot_longer(names_to = "sample", values_to = "norm_value", P1104A_IFNa_high_t24_1:WT_none_none_t6_2) %>%
+    inner_join(de_prop %>% mutate(sample_id = str_c(covariate, "_", rep)),
+               by = c("sample" = "sample_id")) %>%
+    arrange(cytokine, group, dosage, time, rep)
+```
+
+
+```R
+plot_gene_vsd <- function(gene_id) {
+
+    the_plot <- vsd_gene %>%
+        filter(gene == gene_id) %>%
+        mutate(dosage = relevel(as.factor(dosage), ref = "low")) %>%
+        ggplot() +
+            geom_point(aes(x = dosage,
+                           y = norm_value,
+                           color = group),
+                       size = 3,
+                       position = position_jitterdodge(jitter.width = 0.1,
+                                                       dodge.width = 0.5)) +
+            theme_pubr(base_size = 16,
+                       x.text.angle = 45) +
+            ggtitle(gene_id) +
+            facet_grid(cols = vars(cytokine, time), scales = "free_x") +
+            ylab("variance stabilized\nabundance")
+
+    return(the_plot)
+    
+}
+
+options(repr.plot.width = 15, repr.plot.height = 18)
+plot_gene_vsd("ADGRL3") /
+    plot_gene_vsd("IL7R") /
+    plot_gene_vsd("CNTN1") /
+    plot_gene_vsd("CTNNA2")
+
+plot_gene_vsd("TFRC") /
+    plot_gene_vsd("ATXN7L3B") /
+    plot_gene_vsd("EID1") /
+    plot_gene_vsd("TAF7")
+```
+
+
+    
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_61_0.png)
+    
+
+
+
+    
+![png](IL23-RNAseq-combined_files/IL23-RNAseq-combined_61_1.png)
+    
+

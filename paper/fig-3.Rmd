@@ -1,0 +1,5 @@
+```{r fig-3-setup}
+knitr::opts_chunk$set(
+  fig.path = "./fig-2/"
+)
+```

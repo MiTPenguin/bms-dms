@@ -1,0 +1,16 @@
+```{r fig-1-setup}
+knitr::opts_chunk$set(
+  fig.path = "./fig-1/"
+)
+```
+
+### Main Heatmaps
+
+```{r main-heatmaps}
+library(tidyverse)
+ifna_signaling <- read_tsv("sumstats/TYK2-run7-combined-cleaned.sumstats.tsv") %>% filter(condition == "IFNalpha100_0")
+stability <- read_tsv("sumstats/TYK2-FLOW-flow-cleaned.midpoints.tsv")
+
+```
+
+

@@ -2,15 +2,60 @@
 knitr::opts_chunk$set(
   fig.path = "./fig-1/"
 )
+
+library(tidyverse)
+
+ifna_signaling <- read_tsv("sumstats/TYK2-run7-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>% filter(condition == "IFNalpha100_0")
+stability <- read_tsv("sumstats/TYK2-FLOW-flow-cleaned.midpoints.tsv", show_col_types = FALSE)
 ```
 
 ### Main Heatmaps
 
-```{r main-heatmaps}
-library(tidyverse)
-ifna_signaling <- read_tsv("sumstats/TYK2-run7-combined-cleaned.sumstats.tsv") %>% filter(condition == "IFNalpha100_0")
-stability <- read_tsv("sumstats/TYK2-FLOW-flow-cleaned.midpoints.tsv")
+```{r main-heatmap-activity, fig.width=8, fig.height=12}
+norm_heat_l2fc <- ifna_signaling %>%
+    mutate(aa = if_else(aa %in% c("*", "X"), "Stop", aa)) %>%
+    ggplot() +
+        geom_tile(aes(y = pos, x = aa, fill = log2FoldChange)) +
+        scale_fill_scico_mid(limits = c(-3,1), palette = "vik", mid = 0, oob = squish) +
+        xlab("") + ylab("TYK2 Amino Acid Position") +
+        ggtitle("TYK2 // Assay 7 // IFN-alpha 100 U/mL") +
+        scale_y_reverse()
 
+norm_heat_z <- ifna_signaling %>%
+    mutate(aa = if_else(aa %in% c("*", "X"), "Stop", aa)) %>%
+    rename("Z-Statistic" = "statistic") %>%
+    ggplot() +
+        geom_tile(aes(y = pos, x = aa, fill = `Z-Statistic`)) +
+        scale_fill_scico_mid( limits = c(-10,2.5), palette = "vik", mid = 0, oob = squish) +
+        xlab("") + ylab("TYK2 Amino Acid Position") +
+        ggtitle("TYK2 // Assay 7 // IFN-alpha 100 U/mL") +
+        scale_y_reverse()
+
+norm_heat_l2fc + norm_heat_z
+```
+
+```{r main-heatmap-stability, fig.width=8, fig.height=12}
+norm_heat_l2fc <- stability %>%
+    mutate(aa = if_else(aa %in% c("*", "X"), "Stop", aa)) %>%
+    rename("Midpoint Shift" = "midpoint_shift") %>%
+    ggplot() +
+        geom_tile(aes(y = pos, x = aa, fill = `Midpoint Shift`)) +
+        scale_fill_scico_mid(limits = c(-0.75, 0.25), palette = "vik", mid = 0, oob = squish) +
+        xlab("") + ylab("TYK2 Amino Acid Position") +
+        ggtitle("TYK2 // FlowDMS") +
+        scale_y_reverse()
+
+norm_heat_z <- stability %>%
+    mutate(aa = if_else(aa %in% c("*", "X"), "Stop", aa)) %>%
+    rename("Z-Statistic" = "statistic") %>%
+    ggplot() +
+        geom_tile(aes(y = pos, x = aa, fill = `Z-Statistic`)) +
+        scale_fill_scico_mid( limits = c(-10,2.5), palette = "vik", mid = 0, oob = squish) +
+        xlab("") + ylab("TYK2 Amino Acid Position") +
+        ggtitle("TYK2 // FlowDMS") +
+        scale_y_reverse()
+
+norm_heat_l2fc + norm_heat_z
 ```
 
 

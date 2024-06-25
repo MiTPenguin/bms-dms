@@ -25,4 +25,4 @@ June 25, 2024
 
 ### Drug Resistance
 
-![](./fig-2/bms-drig-resist-1.png)<!-- -->
+![](./fig-3/bms-drig-resist-1.png)<!-- -->

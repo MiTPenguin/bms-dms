@@ -1,6 +1,6 @@
 ```{r fig-3-setup}
 knitr::opts_chunk$set(
-  fig.path = "./fig-2/"
+  fig.path = "./fig-3/"
 )
 
 library(tidyverse)
@@ -13,7 +13,7 @@ sumstats_assay3 <- read_tsv("sumstats/TYK2-run3-combined-cleaned.contrast.tsv", 
 
 ### Drug Resistance
 
-```{r bms-drig-resist, fig.width = 10, fig.height = 10}
+```{r bms-drig-resist, fig.width = 7, fig.height = 7}
 ggplot(sumstats_assay3) +
     geom_hline(yintercept = -log10(0.01), color = "red") +
     geom_point(aes(x = log2Contrast,

@@ -35,7 +35,7 @@ norm_heat_l2fc <- ifna_signaling %>%
         xlab("") + ylab("TYK2 Amino Acid Position") +
         ggtitle("TYK2 // Assay 7 // IFN-alpha 100 U/mL") +
         scale_y_reverse() +
-        theme_bw()
+        theme_bw(base_size = 8)
 
 norm_heat_z <- ifna_signaling %>%
     rename("Z-Statistic" = "statistic") %>%
@@ -45,7 +45,7 @@ norm_heat_z <- ifna_signaling %>%
         xlab("") + ylab("TYK2 Amino Acid Position") +
         ggtitle("TYK2 // Assay 7 // IFN-alpha 100 U/mL") +
         scale_y_reverse() +
-        theme_bw()
+        theme_bw(base_size = 8)
 
 norm_heat_l2fc + norm_heat_z
 ```
@@ -57,8 +57,8 @@ norm_heat_l2fc <- stability %>%
         geom_tile(aes(y = pos, x = aa, fill = `Midpoint Shift`)) +
         scale_fill_scico_mid(limits = c(-0.75, 0.25), palette = "vik", mid = 0, oob = squish) +
         xlab("") + ylab("TYK2 Amino Acid Position") +
-        ggtitle("TYK2 // FlowDMS")  +
-        theme_bw() +
+        ggtitle("TYK2 // FlowDMS") +
+        theme_bw(base_size = 8) +
         scale_y_reverse()
 
 norm_heat_z <- stability %>%
@@ -68,7 +68,7 @@ norm_heat_z <- stability %>%
         scale_fill_scico_mid( limits = c(-10,2.5), palette = "vik", mid = 0, oob = squish) +
         xlab("") + ylab("TYK2 Amino Acid Position") +
         ggtitle("TYK2 // FlowDMS") +
-        theme_bw() +
+        theme_bw(base_size = 8) +
         scale_y_reverse()
 
 norm_heat_l2fc + norm_heat_z

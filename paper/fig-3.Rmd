@@ -3,8 +3,6 @@ knitr::opts_chunk$set(
   fig.path = "./fig-3/"
 )
 
-library(tidyverse)
-
 sumstats_assay3 <- read_tsv("sumstats/TYK2-run3-combined-cleaned.contrast.tsv", show_col_types = FALSE)  %>%
     filter(condition == "IFNalphaWithDrug_100") %>%
     mutate(lab = str_c(pos, aa),
@@ -32,4 +30,21 @@ ggplot(sumstats_assay3) +
     scale_color_identity() +
     ggtitle("IFN-alpha + BMS-986202, Normalized to Untreated")
 ```
+
+### Thresholding
+
+```{r}
+sumstats_assay3_cat <- sumstats_assay3 %>%
+    mutate()
+
+write_tsv("figure_output/TYK2-run3-combined-cleaned-with-thresholds.contrast.tsv",
+          sumstats_assay3_cat)
+
+ggplot(sumstats_assay3) +
+    geom_histogram(aes(x = p.value), bins = 100) +
+    theme_pubr()
+```
+
+
+
 

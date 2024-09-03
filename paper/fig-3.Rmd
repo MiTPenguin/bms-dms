@@ -3,6 +3,12 @@ knitr::opts_chunk$set(
   fig.path = "./fig-3/"
 )
 
+library(qqplotr)
+
+sumstats_assay3_unnormalized <- read_tsv("sumstats/TYK2-run3-combined-cleaned.sumstats.tsv", show_col_types = FALSE)  %>%
+    mutate(fdr = p.adjust(p.value, method = "BH")) %>%
+    filter(condition == "IFNalphaWithDrug_100")
+
 sumstats_assay3 <- read_tsv("sumstats/TYK2-run3-combined-cleaned.contrast.tsv", show_col_types = FALSE)  %>%
     filter(condition == "IFNalphaWithDrug_100") %>%
     mutate(lab = str_c(pos, aa),
@@ -34,16 +40,77 @@ ggplot(sumstats_assay3) +
 ### Thresholding
 
 ```{r}
-sumstats_assay3_cat <- sumstats_assay3 %>%
-    mutate()
+sumstats_assay3_thresh <- sumstats_assay3 %>%
+    mutate(fdr_05 = if_else(fdr <= 0.05, "Significant", "NS"),
+           fdr_01 = if_else(fdr <= 0.01, "Significant", "NS"),
+           fdr_001 = if_else(fdr <= 0.001, "Significant", "NS")) %>%
+    select(-lab)
 
-write_tsv("figure_output/TYK2-run3-combined-cleaned-with-thresholds.contrast.tsv",
-          sumstats_assay3_cat)
+sumstats_assay3_unnormalized_thresh <- sumstats_assay3_unnormalized  %>%
+    mutate(fdr_05 = if_else(fdr <= 0.05, "Significant", "NS"),
+           fdr_01 = if_else(fdr <= 0.01, "Significant", "NS"),
+           fdr_001 = if_else(fdr <= 0.001, "Significant", "NS"))
 
-ggplot(sumstats_assay3) +
-    geom_histogram(aes(x = p.value), bins = 100) +
-    theme_pubr()
+sumstats_assay3_thresh %>% write_tsv("variant_sets/TYK2-run3-combined-cleaned-thresholds.contrast.tsv")
+sumstats_assay3_unnormalized_thresh %>% write_tsv("variant_sets/TYK2-run3-combined-cleaned-thresholds.sumstats.tsv")
+
+sumstats_assay3_thresh %>%
+    filter(fdr_05 != "NS") %>%
+    select(pos, aa) %>%
+    write_tsv("variant_sets/TYK2-Assay3-Inhibitor-Normalized-FDR05.tsv")
+
+sumstats_assay3_thresh %>%
+    filter(fdr_01 != "NS") %>%
+    select(pos, aa) %>%
+    write_tsv("variant_sets/TYK2-Assay3-Inhibitor-Normalized-FDR01.tsv")
+
+sumstats_assay3_thresh %>%
+   filter(fdr_001 != "NS") %>%
+    select(pos, aa) %>%
+    write_tsv("variant_sets/TYK2-Assay3-Inhibitor-Normalized-FDR001.tsv")
+
+sumstats_assay3_unnormalized_thresh %>%
+   filter(fdr_05 != "NS") %>%
+    select(pos, aa) %>%
+    write_tsv("variant_sets/TYK2-Assay3-Inhibitor-Unnormalized-FDR05.tsv")
+
+sumstats_assay3_unnormalized_thresh %>%
+   filter(fdr_01 != "NS") %>%
+    select(pos, aa) %>%
+    write_tsv("variant_sets/TYK2-Assay3-Inhibitor-Unnormalized-FDR01.tsv")
+
+sumstats_assay3_unnormalized_thresh %>%
+   filter(fdr_001 != "NS") %>%
+    select(pos, aa) %>%
+    write_tsv("variant_sets/TYK2-Assay3-Inhibitor-Unnormalized-FDR001.tsv")
 ```
+
+```{r}
+qq_data <- tibble("quantiles" = seq(1, nrow(sumstats_assay3))*1/(nrow(sumstats_assay3)),
+                  "pvalues" = sort(sumstats_assay3$pvalue),
+                  "fdr" = sort(sumstats_assay3$fdr))
+
+ggplot(qq_data) +
+  geom_point(aes(x = -log10(quantiles), y = -log10(pvalues),
+                 color = if_else(fdr <= 0.01, "red", "black"))) +
+  geom_abline() +
+  scale_color_identity() +
+  ggtitle("Normalized to Untreated, FDR <= 0.01")
+
+qq_data_unnorm <- tibble("quantiles" = seq(1, nrow(sumstats_assay3_unnormalized))*1/(nrow(sumstats_assay3_unnormalized)),
+                         "pvalues" = sort(sumstats_assay3_unnormalized$p.value),
+                         "fdr" = sort(sumstats_assay3_unnormalized$fdr))
+
+ggplot(qq_data_unnorm) +
+  geom_point(aes(x = -log10(quantiles), y = -log10(pvalues),
+                 color = if_else(fdr <= 0.01, "red", "black"))) +
+  geom_abline() +
+  scale_color_identity() +
+  ggtitle("Unnormalized, FDR <= 0.01")
+
+```
+
+
 
 
 

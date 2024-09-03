@@ -1,7 +1,7 @@
 Octant-BMS TYK2 Manuscript Data Visuals
 ================
 Nathan Abell and Conor Howard
-June 25, 2024
+September 03, 2024
 
 # Common Data Processing
 
@@ -26,3 +26,7 @@ June 25, 2024
 ### Drug Resistance
 
 ![](./fig-3/bms-drig-resist-1.png)<!-- -->
+
+### Thresholding
+
+![](./fig-3/unnamed-chunk-6-1.png)<!-- -->![](./fig-3/unnamed-chunk-6-2.png)<!-- -->

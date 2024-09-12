@@ -6,13 +6,18 @@ knitr::opts_chunk$set(
 library(qqplotr)
 
 sumstats_assay3_unnormalized <- read_tsv("sumstats/TYK2-run3-combined-cleaned.sumstats.tsv", show_col_types = FALSE)  %>%
-    mutate(fdr = p.adjust(p.value, method = "BH")) %>%
-    filter(condition == "IFNalphaWithDrug_100")
+    mutate(fdr = p.adjust(p.value, method = "BH"))
 
 sumstats_assay3 <- read_tsv("sumstats/TYK2-run3-combined-cleaned.contrast.tsv", show_col_types = FALSE)  %>%
-    filter(condition == "IFNalphaWithDrug_100") %>%
     mutate(lab = str_c(pos, aa),
            lab = if_else(fdr < 0.01, lab, ""))
+
+sumstats_assay3_unnormalized_drug <- sumstats_assay3_unnormalized %>%
+    filter(condition == "IFNalphaWithDrug_100")
+
+sumstats_assay3_drug <- sumstats_assay3 %>%
+   filter(condition == "IFNalphaWithDrug_100")
+
 ```
 
 ### Drug Resistance

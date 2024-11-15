@@ -2,7 +2,16 @@
 knitr::opts_chunk$set(
   fig.path = "./fig-3/"
 )
-aa_order <- read_tsv("data/aa_groups.tsv", show_col_types = FALSE) %>% pull(aa)
+
+colors <- c("Neither" = "gray",
+            "Both" = "purple",
+            "BMS-986202" = "red",
+            "Zasocitinib" = "blue")
+
+aa_order <- c("G","A","P","K","H",
+              "R","T","S","C","E",
+              "D","M","V","I","L",
+              "Y","W","F","Q","N")
 
 sumstats_bms <- sumstats %>% filter(grepl("BMS", condition)) %>%
     mutate(condition = gsub("IFNalpha.*\\+", "", condition))
@@ -73,6 +82,7 @@ sumstats_resist <- contrast_sumstats %>%
 
 sig_vars_resist <- sumstats_resist %>% filter(`FDR < 0.01` != "Neither") %>% pull(pos) %>% unique()
 prepped_data_resist <- sumstats_resist %>% filter(pos %in% sig_vars_resist)
+names(prepped_data_resist) <- c("pos", "aa", "Z_BMS", "FDR_BMS")
 ```
 
 Group assignment for Zasocitinib and BMS-986202 drug potentiation profiles:

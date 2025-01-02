@@ -100,6 +100,12 @@ write_tsv(contrast_sumstats, "sumstats/TYK2-combined-cleaned.contrast.tsv")
 ```{r child="fig-1.Rmd"}
 ```
 
+# Figure S1
+
+```{r child="fig-1-supplement.qmd"}
+```
+
+
 # Figure 2
 
 ```{r child="fig-2.Rmd"}

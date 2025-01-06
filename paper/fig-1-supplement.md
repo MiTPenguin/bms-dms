@@ -18,11 +18,13 @@ Robert Warneford-Thomson
     LoF/GoF counts](#fig-s1c---barplots-with-lofgof-counts)
   - [<span class="toc-section-number">4.3</span> Fig S1D - stop effect
     density plots](#fig-s1d---stop-effect-density-plots)
-  - [<span class="toc-section-number">4.4</span> Fig S1E - Fiducial
-    variant forest plot](#fig-s1e---fiducial-variant-forest-plot)
-  - [<span class="toc-section-number">4.5</span> Fig S1F - Beeswarm with
-    ClinVar, ESM, AlphaMissense
-    etc](#fig-s1f---beeswarm-with-clinvar-esm-alphamissense-etc)
+  - [<span class="toc-section-number">4.4</span> Fig S1F - Fiducial
+    variant forest plot](#fig-s1f---fiducial-variant-forest-plot)
+  - [<span class="toc-section-number">4.5</span> Fig S1E, S1G - Beeswarm
+    with ClinVar, ESM, AlphaMissense
+    etc](#fig-s1e-s1g---beeswarm-with-clinvar-esm-alphamissense-etc)
+  - [<span class="toc-section-number">4.6</span> Merged Figure
+    S1](#merged-figure-s1)
 
 # I. SETUP
 
@@ -58,16 +60,19 @@ pacman::p_load(
 knitr::opts_chunk$set(
   echo = FALSE,
   fig.path = "./fig-1/",
+  fig.dpi=600,
   warning = FALSE,
   message = FALSE,
   dev = c("png", "pdf")
 )
 setwd("~/Analyses/bms-dms/paper")
 
-cbPalette <- c( "#0072B2","#DC5E65", "#56B4E9","#E69F00",  "#009E73", "#F0E442", "pink", "#CC79A7","lightgrey", "grey", "darkgrey")
+cbPalette <- c("#DC5E65", "darkgrey", "#0072B2", "#56B4E9", "#E69F00", "#009E73", "#F0E442", "pink", "#CC79A7", "lightgrey", "grey")
 
-aa_order <- c("*", "P", "G", "A", "M", "V", "L", "I", "T", "S",
-              "C", "Q", "N", "Y", "W", "F", "E", "D", "K", "H", "R")
+aa_order <- c(
+  "*", "P", "G", "A", "M", "V", "L", "I", "T", "S",
+  "C", "Q", "N", "Y", "W", "F", "E", "D", "K", "H", "R"
+)
 
 source("../../dms/src/model/dms-analysis-utils.R")
 ```
@@ -89,12 +94,25 @@ and 100 U/mL IFNa from run7
 
 ## Fig S1B - Flow + IFNa-1,10,100 heatmaps
 
-<img src="./fig-1/s1b-heatmaps-1.png" data-fig-align="center" />
-
 ## Fig S1C - Barplots with LoF/GoF counts
+
+I’m going to just use a 1% FDR to determine GoF and LoF variants with no
+minimum log2fold or midpoint shift threshold
 
 ## Fig S1D - stop effect density plots
 
-## Fig S1E - Fiducial variant forest plot
+## Fig S1F - Fiducial variant forest plot
 
-## Fig S1F - Beeswarm with ClinVar, ESM, AlphaMissense etc
+## Fig S1E, S1G - Beeswarm with ClinVar, ESM, AlphaMissense etc
+
+## Merged Figure S1
+
+<div id="fig-S1-merged">
+
+<img src="./fig-1/fig-S1-merged-1.png" id="fig-S1-merged"
+data-fig-align="center" />
+
+
+Figure 1
+
+</div>

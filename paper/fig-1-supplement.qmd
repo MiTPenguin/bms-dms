@@ -425,7 +425,7 @@ S1D <- merge_sumstats %>%
 
 ## Fig S1F - Fiducial variant forest plot
 
-```{r s1e, fig.width=12, fig.height=6}
+```{r s1f, fig.width=12, fig.height=6}
 spikeins <- read_tsv("../paper/data/tyk2-spikeins.tsv",
   col_names = c("pos", "mut_id", "class")
 ) %>%
@@ -501,7 +501,7 @@ S1F <- ggplot(spikeins_join) +
 
 ## Fig S1E, S1G - Beeswarm with ClinVar, ESM, AlphaMissense etc
 
-```{r s1f, fig.width=8, fig.height=8}
+```{r s1e, fig.width=8, fig.height=8}
 df <- anno_sumstats %>% 
   filter(mut_thr != "Stop") %>% 
   filter(assay == "Flow" | run == "run7") %>%
@@ -518,7 +518,6 @@ df <- anno_sumstats %>%
                                                                "Benign/Likely Benign",
                                                                "Benign",
                                                                "Not In Clinvar")))
-
 
 
 S1E <- df %>% 
@@ -548,7 +547,9 @@ S1E <- df %>%
     strip.text.x = element_text(size = rel(0.7)),
     plot.tag.position = c(0.01, 0.98)
     )
+```
 
+```{r s1g, fig.width=8, fig.height=8}
 S1G <- df %>% 
   filter(classifier == "clinvar") %>% 
   ggplot(aes(x = classifier_value, y = z_statistic,

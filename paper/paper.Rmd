@@ -81,7 +81,6 @@ untreated <- assay_data %>%
          "log2StdError_Control" = "log2StdError") %>%
   select(-condition, -statistic, -p.value, -fdr, -version)
 
-
 sumstats <- inner_join(treated, untreated, by = c("chunk", "pos", "aa", "assay"))
 contrast_sumstats <- sumstats %>%
   group_by(assay) %>%

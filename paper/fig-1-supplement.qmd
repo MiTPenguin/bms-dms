@@ -232,7 +232,8 @@ merge_sumstats <- bind_rows(ifna_merge, stability) %>%
 
 #annotate data with 3 letter aa
 aalet <- read_tsv("data/aa-letters.tsv", col_names = c("full", "thr", "aa")) %>%
-    select(-full)
+    select(-full) 
+
 wtseq <- read_tsv("data/TYK2-sequence.tsv", col_names = c("pos", "thr"), skip = 1) %>%
     left_join(aalet, by = "thr") %>%
     rename("wt_aa" = "aa",
@@ -241,6 +242,7 @@ wtseq <- read_tsv("data/TYK2-sequence.tsv", col_names = c("pos", "thr"), skip = 
 merge_sumstats <- merge_sumstats %>%
   left_join(wtseq, by = "pos") %>% 
   left_join(aalet %>% rename("mut_thr" = "thr"), by = c("aa")) %>% 
+  mutate(aa = factor(aa, levels = aa_order)) %>%
   replace_na(replace = list(mut_thr = "Stop")) %>% 
   mutate(mut = paste0(wt_thr, pos, mut_thr)) %>% 
   #remove amino acid 1188

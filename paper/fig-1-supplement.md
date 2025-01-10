@@ -14,24 +14,22 @@ Robert Warneford-Thomson
 - [<span class="toc-section-number">4</span> Load
   metadata](#load-metadata)
 - [<span class="toc-section-number">5</span> Figures](#figures)
-  - [<span class="toc-section-number">5.1</span> Missing
-    variants](#missing-variants)
-  - [<span class="toc-section-number">5.2</span> Fig S1x1 - Flow +
+  - [<span class="toc-section-number">5.1</span> Fig S1x1 - Flow +
     IFNa-1,10,100 heatmaps](#fig-s1x1---flow--ifna-110100-heatmaps)
-  - [<span class="toc-section-number">5.3</span> Fig S1x2](#fig-s1x2)
-    - [<span class="toc-section-number">5.3.1</span> Fig S1x2-A -
+  - [<span class="toc-section-number">5.2</span> Fig S1x2](#fig-s1x2)
+    - [<span class="toc-section-number">5.2.1</span> Fig S1x2-A -
       Barplots with LoF/GoF
       counts](#fig-s1x2-a---barplots-with-lofgof-counts)
-    - [<span class="toc-section-number">5.3.2</span> Fig S1x2-B - stop
+    - [<span class="toc-section-number">5.2.2</span> Fig S1x2-B - stop
       effect density plots](#fig-s1x2-b---stop-effect-density-plots)
-    - [<span class="toc-section-number">5.3.3</span> Fig S1x2-C -
+    - [<span class="toc-section-number">5.2.3</span> Fig S1x2-C -
       AlphaMissense](#fig-s1x2-c---alphamissense)
-    - [<span class="toc-section-number">5.3.4</span> Fig S1x2-D -
+    - [<span class="toc-section-number">5.2.4</span> Fig S1x2-D -
       Fiducial variant forest
       plot](#fig-s1x2-d---fiducial-variant-forest-plot)
-    - [<span class="toc-section-number">5.3.5</span> Fig S1x2-E -
+    - [<span class="toc-section-number">5.2.5</span> Fig S1x2-E -
       ClinVar annotation](#fig-s1x2-e---clinvar-annotation)
-  - [<span class="toc-section-number">5.4</span> Merged Figure
+  - [<span class="toc-section-number">5.3</span> Merged Figure
     S1x2](#merged-figure-s1x2)
 
 # I. SETUP
@@ -104,23 +102,6 @@ and 100 U/mL IFNa from run7
 # Load metadata
 
 # Figures
-
-## Missing variants
-
-    # A tibble: 4 × 4
-      facet_label   missing_variants total_variants missing_pct
-      <chr>                    <int>          <int>       <dbl>
-    1 Abundance                 1229          24927        4.93
-    2 IFNα 1 U/mL               1204          24927        4.83
-    3 IFNα 10 U/mL              1204          24927        4.83
-    4 IFNα 100 U/mL             1201          24927        4.82
-
-    # A tibble: 1 × 1
-      fraction
-         <dbl>
-    1   0.0481
-
-<img src="./fig-1/Missing-variants-1.png" data-fig-align="center" />
 
 ## Fig S1x1 - Flow + IFNa-1,10,100 heatmaps
 

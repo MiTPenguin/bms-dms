@@ -3,10 +3,33 @@ knitr::opts_chunk$set(
   fig.path = "./fig-3/"
 )
 
+colors <- c("Neither" = "gray",
+            "Both" = "purple",
+            "BMS-986202" = "red",
+            "Zasocitinib" = "blue")
+
+aa_order <- c("G","A","P","K","H",
+              "R","T","S","C","E",
+              "D","M","V","I","L",
+              "Y","W","F","Q","N")
+
 sumstats_bms <- sumstats %>% filter(grepl("BMS", condition)) %>%
     mutate(condition = gsub("IFNalpha.*\\+", "", condition))
 contrast_sumstats_bms <- contrast_sumstats %>% filter(grepl("BMS", condition)) %>%
     mutate(condition = gsub("IFNalpha.*\\+", "", condition))
+
+contrast_sumstats_bms_thresh <- contrast_sumstats_bms %>%
+    mutate(fdr_05 = if_else(fdr < 0.05, "Significant", "NS"),
+           fdr_01 = if_else(fdr < 0.01, "Significant", "NS"),
+           fdr_001 = if_else(fdr < 0.001, "Significant", "NS"))
+
+sumstats_bms_unnormalized_thresh <- sumstats_bms  %>%
+    mutate(fdr_05 = if_else(fdr < 0.05, "Significant", "NS"),
+           fdr_01 = if_else(fdr < 0.01, "Significant", "NS"),
+           fdr_001 = if_else(fdr < 0.001, "Significant", "NS"))
+
+contrast_sumstats_bms_thresh %>% write_tsv("variant_sets/TYK2-BMS-combined-cleaned-thresholds.contrast.tsv")
+sumstats_bms_unnormalized_thresh %>% write_tsv("variant_sets/TYK2-BMS-combined-cleaned-thresholds.sumstats.tsv")
 
 ```
 
@@ -40,81 +63,91 @@ ggplot(pos_counts) +
 
 ```
 
+### Chemical Footprints
+
+Group assignment for Zasocitinib and BMS-986202 drug resistance profiles:
+```{r}
+sumstats_resist <- contrast_sumstats %>%
+    filter(assay == "assay4", condition %in% c("IFNalpha+Zasocitinib_1e-06", "IFNalpha+BMS-986202_2e-08")) %>%
+    select(pos, condition, aa, statistic, fdr_contrast) %>%
+    pivot_wider(names_from = condition, values_from = c(statistic, fdr_contrast)) %>%
+    mutate(`FDR < 0.01` = case_when(`fdr_contrast_IFNalpha+BMS-986202_2e-08` < 0.01 & `fdr_contrast_IFNalpha+Zasocitinib_1e-06` < 0.01 ~ "Both",
+                           `fdr_contrast_IFNalpha+BMS-986202_2e-08` < 0.01 & `fdr_contrast_IFNalpha+Zasocitinib_1e-06` > 0.01 ~ "BMS-986202",
+                           `fdr_contrast_IFNalpha+BMS-986202_2e-08` > 0.01 & `fdr_contrast_IFNalpha+Zasocitinib_1e-06` < 0.01 ~ "Zasocitinib",
+                           TRUE ~ "Neither"),
+          `FDR < 0.01` = if_else(`statistic_IFNalpha+Zasocitinib_1e-06` < 0 & `statistic_IFNalpha+BMS-986202_2e-08` < 0,
+                                 "Neither",
+                                 `FDR < 0.01`),
+          aa = factor(aa, levels = aa_order))
+
+sig_vars_resist <- sumstats_resist %>% filter(`FDR < 0.01` != "Neither") %>% pull(pos) %>% unique()
+prepped_data_resist <- sumstats_resist %>% filter(pos %in% sig_vars_resist)
+names(prepped_data_resist) <- c("pos", "aa", "Z_BMS", "FDR_BMS")
+```
+
+Group assignment for Zasocitinib and BMS-986202 drug potentiation profiles:
+```{r}
+sumstats_potentiate <- contrast_sumstats %>%
+    filter(assay == "assay7", condition %in% c("IFNalpha100+Zasocitinib_7e-09", "IFNalpha100+BMS-986202_2e-08")) %>%
+    select(pos, condition, aa, statistic, fdr_contrast) %>%
+    pivot_wider(names_from = condition, values_from = c(statistic, fdr_contrast)) %>%
+    mutate(`FDR < 0.01` = case_when(`fdr_contrast_IFNalpha100+BMS-986202_2e-08` < 0.01 & `fdr_contrast_IFNalpha100+Zasocitinib_7e-09` < 0.01 ~ "Both",
+                           `fdr_contrast_IFNalpha100+BMS-986202_2e-08` < 0.01 & `fdr_contrast_IFNalpha100+Zasocitinib_7e-09` > 0.01 ~ "BMS-986202",
+                           `fdr_contrast_IFNalpha100+BMS-986202_2e-08` > 0.01 & `fdr_contrast_IFNalpha100+Zasocitinib_7e-09` < 0.01 ~ "Zasocitinib",
+                           TRUE ~ "Neither"),
+          `FDR < 0.01` = if_else(`fdr_contrast_IFNalpha100+Zasocitinib_7e-09` < 0 & `fdr_contrast_IFNalpha100+BMS-986202_2e-08` < 0,
+                                 "Neither",
+                                 `FDR < 0.01`),
+          aa = factor(aa, levels = aa_order))
+
+sig_vars_potentiate <- sumstats_potentiate %>% filter(`FDR < 0.01` != "Neither") %>% pull(pos) %>% unique()
+prepped_data_potentiate <- sumstats_potentiate %>% filter(pos %in% sig_vars_potentiate)
+```
+
+Chemical footprint grid plots
+```{r}
+
+```
+
 ### Thresholding
 
 ```{r}
-contrast_sumstats_bms_thresh <- contrast_sumstats_bms %>%
-    mutate(fdr_05 = if_else(fdr < 0.05, "Significant", "NS"),
-           fdr_01 = if_else(fdr < 0.01, "Significant", "NS"),
-           fdr_001 = if_else(fdr < 0.001, "Significant", "NS")) %>%
-    select(-lab)
-
-sumstats_bms_unnormalized_thresh <- sumstats_bms  %>%
-    mutate(fdr_05 = if_else(fdr < 0.05, "Significant", "NS"),
-           fdr_01 = if_else(fdr < 0.01, "Significant", "NS"),
-           fdr_001 = if_else(fdr < 0.001, "Significant", "NS"))
-
-contrast_sumstats_bms_thresh %>% write_tsv("variant_sets/TYK2-BMS-combined-cleaned-thresholds.contrast.tsv")
-sumstats_bms_unnormalized_thresh %>% write_tsv("variant_sets/TYK2-BMS-combined-cleaned-thresholds.sumstats.tsv")
-
-sumstats_assay3_thresh %>%
+contrast_sumstats_bms_thresh %>%
+    filter(assay == "assay3") %>%
     filter(fdr_05 != "NS") %>%
     select(pos, aa) %>%
     write_tsv("variant_sets/TYK2-BMS-Inhibitor-Normalized-FDR05.tsv")
 
-sumstats_assay3_thresh %>%
+contrast_sumstats_bms_thresh %>%
+    filter(assay == "assay3") %>%
     filter(fdr_01 != "NS") %>%
     select(pos, aa) %>%
     write_tsv("variant_sets/TYK2-BMS-Inhibitor-Normalized-FDR01.tsv")
 
-sumstats_assay3_thresh %>%
+contrast_sumstats_bms_thresh %>%
+    filter(assay == "assay3") %>%
+   
    filter(fdr_001 != "NS") %>%
     select(pos, aa) %>%
     write_tsv("variant_sets/TYK2-BMS-Inhibitor-Normalized-FDR001.tsv")
 
-sumstats_assay3_unnormalized_thresh %>%
-   filter(fdr_05 != "NS") %>%
+sumstats_bms_unnormalized_thresh %>%
+    filter(assay == "assay3") %>%
+    filter(fdr_05 != "NS") %>%
     select(pos, aa) %>%
     write_tsv("variant_sets/TYK2-BMS-Inhibitor-Unnormalized-FDR05.tsv")
 
-sumstats_assay3_unnormalized_thresh %>%
-   filter(fdr_01 != "NS") %>%
+sumstats_bms_unnormalized_thresh %>%
+    filter(assay == "assay3") %>%
+    filter(fdr_01 != "NS") %>%
     select(pos, aa) %>%
     write_tsv("variant_sets/TYK2-BMS-Inhibitor-Unnormalized-FDR01.tsv")
 
-sumstats_assay3_unnormalized_thresh %>%
-   filter(fdr_001 != "NS") %>%
+sumstats_bms_unnormalized_thresh %>%
+    filter(assay == "assay3") %>%
+    filter(fdr_001 != "NS") %>%
     select(pos, aa) %>%
     write_tsv("variant_sets/TYK2-BMS-Inhibitor-Unnormalized-FDR001.tsv")
 ```
-
-```{r}
-qq_data <- tibble("quantiles" = seq(1, nrow(sumstats_assay3))*1/(nrow(sumstats_assay3)),
-                  "pvalues" = sort(sumstats_assay3$pvalue),
-                  "fdr" = sort(sumstats_assay3$fdr))
-
-ggplot(qq_data) +
-  geom_point(aes(x = -log10(quantiles), y = -log10(pvalues),
-                 color = if_else(fdr <= 0.01, "red", "black"))) +
-  geom_abline() +
-  scale_color_identity() +
-  ggtitle("Normalized to Untreated, FDR <= 0.01")
-
-qq_data_unnorm <- tibble("quantiles" = seq(1, nrow(sumstats_assay3_unnormalized))*1/(nrow(sumstats_assay3_unnormalized)),
-                         "pvalues" = sort(sumstats_assay3_unnormalized$p.value),
-                         "fdr" = sort(sumstats_assay3_unnormalized$fdr))
-
-ggplot(qq_data_unnorm) +
-  geom_point(aes(x = -log10(quantiles), y = -log10(pvalues),
-                 color = if_else(fdr <= 0.01, "red", "black"))) +
-  geom_abline() +
-  scale_color_identity() +
-  ggtitle("Unnormalized, FDR <= 0.01")
-
-```
-
-
-
-
 
 

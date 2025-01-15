@@ -31,6 +31,7 @@ pacman::p_load(
   ggh4x,
   ggpubr,
   ggsci,
+  ggsignif,
   magrittr,
   readxl,
   paletteer,
@@ -464,8 +465,10 @@ B <- merge_sumstats %>%
 ### Fig S1x2-C - AlphaMissense
 
 ```{r S1x2-C, fig.width=8, fig.height=8}
-C <- anno_df %>% 
-  dplyr::filter(classifier == "AlphaMissense") %>% 
+am_df <-  anno_df %>% 
+  dplyr::filter(classifier == "AlphaMissense")
+
+C <- am_df %>% 
     ggplot(aes(x = classifier_value, y = z_statistic,
              color = classifier_value)) +
   # geom_hline(yintercept = 0, color = "lightgrey", width = 0.5) +
@@ -480,6 +483,28 @@ C <- anno_df %>%
       "Ambiguous" =  "#E69F00",
       "Benign" =  "#0072B2")
   ) +
+  # add significance calculation using KS test
+  geom_signif(
+    color = "black",
+    comparisons = list(
+      c("Pathogenic", "Ambiguous"),
+      c("Pathogenic", "Benign"),
+      c("Ambiguous", "Benign")
+    ),
+    map_signif_level = function(p) {
+      if(p < 0.001) return("***")
+      else if(p < 0.01) return("**")
+      else if(p < 0.05) return("*")
+      else return("ns")
+    },
+    test = "ks.test",
+    margin_top = 0.01,
+    step_increase = 0.025,
+    tip_length = 0.005,
+    vjust = 0.65,
+    size = 0.5,
+    textsize = 3
+  ) +
   facet_grid2(. ~ facet_label,
               scales = "free_y",
               space = "free") +
@@ -487,7 +512,7 @@ C <- anno_df %>%
     x = "AlphaMissense annotation",
     y = "Z statistic",
   ) +
-  ylim(-15,5) +
+  ylim(-15,7) +
   theme_pub(base_size = 11) +
   theme(
     plot.title = element_blank(),
@@ -496,6 +521,7 @@ C <- anno_df %>%
     strip.text.x = element_text(size = rel(0.7)),
     plot.tag.position = c(0.01, 0.98)
     )
+C
 ```
 
 ### Fig S1x2-D - Fiducial variant forest plot

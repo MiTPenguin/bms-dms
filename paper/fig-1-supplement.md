@@ -47,6 +47,7 @@ pacman::p_load(
   ggh4x,
   ggpubr,
   ggsci,
+  ggsignif,
   magrittr,
   readxl,
   paletteer,
@@ -125,6 +126,8 @@ minimum log2fold or midpoint shift threshold
 ### Fig S1x2-B - stop effect density plots
 
 ### Fig S1x2-C - AlphaMissense
+
+<img src="./fig-1/S1x2-C-1.png" data-fig-align="center" />
 
 ### Fig S1x2-D - Fiducial variant forest plot
 

@@ -127,8 +127,6 @@ minimum log2fold or midpoint shift threshold
 
 ### Fig S1x2-C - AlphaMissense
 
-<img src="./fig-1/S1x2-C-1.png" data-fig-align="center" />
-
 ### Fig S1x2-D - Fiducial variant forest plot
 
 ### Fig S1x2-E - ClinVar annotation

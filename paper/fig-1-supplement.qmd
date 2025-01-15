@@ -521,7 +521,7 @@ C <- am_df %>%
     strip.text.x = element_text(size = rel(0.7)),
     plot.tag.position = c(0.01, 0.98)
     )
-C
+
 ```
 
 ### Fig S1x2-D - Fiducial variant forest plot

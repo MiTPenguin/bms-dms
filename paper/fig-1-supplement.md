@@ -600,6 +600,7 @@ C <- am_df %>%
   theme(
     plot.title = element_blank(),
     axis.text.x = element_text(size = rel(0.8)),
+    panel.grid.major.x = element_blank(),
     axis.title = element_text(size = rel(0.6)),
     strip.text.x = element_text(size = rel(0.7)),
     plot.tag.position = c(0.01, 0.98)

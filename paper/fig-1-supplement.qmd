@@ -563,23 +563,32 @@ D1 <- spikeins_join %>%
   filter(facet_label != "Abundance") %>% 
   ggplot() +
   geom_vline(xintercept = 0) +
-  geom_tile(
-    mapping = aes(
-      x = 0, 
-      y = mut_id,
-      width = Inf,
-      fill = class),
-    alpha = 0.4, show.legend = FALSE
+  geom_hline(yintercept = 26.5,
+             color = "#DC5E65",
+             linetype = "dashed") +
+  geom_text(
+    data = tibble(facet_label = "IFNα \n1 U/mL",
+                  label = "GOF"),
+    aes(label = label),
+    color = "#DC5E65",
+    y = 28.5,
+    x = -1.5
   ) +
-  scale_fill_manual(values = c("GOF" = "#DC5E65",
-                               "Unknown" = "white",
-                               "LOF" = "#0072B2")
+  geom_hline(yintercept = 15.5,
+             color = "#0072B2",
+             linetype = "dashed") +
+    geom_text(
+    data = tibble(facet_label = "IFNα \n1 U/mL",
+                  label = "LOF"),
+    aes(label = label),
+    color = "#0072B2",
+    y = 12.5,
+    x = -1.5
   ) +
-  new_scale_fill() +
   geom_pointrange(
     aes(
       x = param_estimate,
-      y = fct_rev(mut_id),
+      y = factor(mut_id),
       xmin = param_estimate - 2 * param_se,
       xmax = param_estimate + 2 * param_se,
       color = significance
@@ -615,23 +624,16 @@ D2 <- spikeins_join %>%
   filter(facet_label == "Abundance") %>% 
   ggplot() +
   geom_vline(xintercept = 0) +
-   geom_tile(
-    mapping = aes(
-      x = 0, 
-      y = mut_id,
-      width = Inf,
-      fill = class),
-    alpha = 0.4, show.legend = FALSE
-  ) +
-  scale_fill_manual(values = c("GOF" = "#DC5E65",
-                               "Unknown" = "white",
-                               "LOF" = "#0072B2")
-  ) +
-  new_scale_fill() +
+   geom_hline(yintercept = 26.5,
+             color = "#DC5E65",
+             linetype = "dashed") +
+  geom_hline(yintercept = 15.5,
+             color = "#0072B2",
+             linetype = "dashed") +
   geom_pointrange(
     aes(
       x = param_estimate,
-      y = fct_rev(mut_id),
+      y = mut_id,
       xmin = param_estimate - 2 * param_se,
       xmax = param_estimate + 2 * param_se,
       color = significance

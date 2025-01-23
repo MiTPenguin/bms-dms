@@ -551,17 +551,25 @@ B <- merge_sumstats %>%
 am_df <-  anno_df %>% 
   dplyr::filter(classifier == "AlphaMissense")
 
-C <- am_df %>% 
+C <- am_df %>%
     ggplot(aes(x = classifier_value, y = z_statistic,
              color = classifier_value)) +
   # geom_hline(yintercept = 0, color = "lightgrey", width = 0.5) +
-  geom_quasirandom(size = 0.5,
-                   show.legend = FALSE) +
+  geom_violin(
+    aes(fill = classifier_value),
+    scale = "width",
+    show.legend = FALSE
+    ) +
   geom_boxplot(show.legend = FALSE,
                col = "black",
                outliers = FALSE,
-               width = 0.15) +
+               width = 0.09) +
   scale_color_manual(values = c(
+    "Pathogenic" = "#DC5E65",
+      "Ambiguous" =  "#E69F00",
+      "Benign" =  "#0072B2")
+  ) +
+    scale_fill_manual(values = c(
     "Pathogenic" = "#DC5E65",
       "Ambiguous" =  "#E69F00",
       "Benign" =  "#0072B2")

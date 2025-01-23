@@ -555,14 +555,13 @@ am_df <-  anno_df %>%
 C <- am_df %>%
     ggplot(aes(x = classifier_value, y = z_statistic,
              color = classifier_value)) +
-  # geom_hline(yintercept = 0, color = "lightgrey", width = 0.5) +
   geom_quasirandom_rast(size = 0.5,
                         show.legend = FALSE) +
-  geom_violin(
-    aes(fill = classifier_value),
-    scale = "width",
-    show.legend = FALSE
-    ) +
+  # geom_violin(
+  #   aes(fill = classifier_value),
+  #   scale = "width",
+  #   show.legend = FALSE
+  #   ) +
   geom_boxplot(show.legend = FALSE,
                col = "black",
                outliers = FALSE,

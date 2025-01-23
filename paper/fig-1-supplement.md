@@ -67,6 +67,7 @@ pacman::p_load(
   ggnewscale,
   ggh4x,
   ggpubr,
+  ggrastr,
   ggsci,
   ggsignif,
   magrittr,
@@ -555,6 +556,8 @@ C <- am_df %>%
     ggplot(aes(x = classifier_value, y = z_statistic,
              color = classifier_value)) +
   # geom_hline(yintercept = 0, color = "lightgrey", width = 0.5) +
+  geom_quasirandom_rast(size = 0.5,
+                        show.legend = FALSE) +
   geom_violin(
     aes(fill = classifier_value),
     scale = "width",
@@ -793,7 +796,7 @@ E <- anno_df %>%
     color = classifier_value_count,
              fill = classifier_value_count)) +
   geom_vline(xintercept = 0, color = "lightgrey", width = 0.5) +
-  geom_quasirandom(orientation = "y",
+  geom_quasirandom_rast(orientation = "y",
                    size = 0.5,
                    width = 0.2,
                    varwidth = TRUE,

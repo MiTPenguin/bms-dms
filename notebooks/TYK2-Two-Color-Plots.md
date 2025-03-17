@@ -1,0 +1,205 @@
+# Two-Color TYK2 Plots
+
+
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+library(scales)
+library(scico)
+library(patchwork)
+library(ggpubr)
+library(tidyverse)
+```
+
+</details>
+
+### Figure 8
+
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+#aa_order <- c("Stop", "P", "G", "A", "M", "V", "L", "I", "T", "S",
+#              "C", "Q", "N", "Y", "W", "F", "E", "D", "K", "H", "R")
+
+ifna_signaling <- read_tsv("../paper/sumstats/TYK2-run7-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
+    filter(condition == "IFNalpha100_0") %>%
+    mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "Stop", aa))
+stability <- read_tsv("../paper/sumstats/TYK2-FLOW-flow-cleaned.midpoints.tsv", show_col_types = FALSE) %>%
+    mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "Stop", aa))
+
+bind_heat_z <- ifna_signaling %>%
+    rename("Z-Statistic" = "statistic") %>%
+    ggplot() +
+        geom_tile(aes(x = pos, y = fct_rev(aa), fill = `Z-Statistic`)) +
+        scale_fill_scico(limits = c(-15, 0), palette = "grayC", oob = squish) +
+        ylab("") + xlab("TYK2 Amino Acid Position") +
+        ggtitle("TYK2 // Assay 7 // IFN-alpha 100 U/mL") +
+        theme_pubr(base_size = 14, legend = "right")
+
+stab_heat_z <- stability %>%
+    rename("Z-Statistic" = "statistic") %>%
+    ggplot() +
+        geom_tile(aes(x = pos, y = fct_rev(aa), fill = `Z-Statistic`)) +
+        scale_fill_scico(limits = c(-15, 0), palette = "grayC", oob = squish) +
+        ylab("") + xlab("TYK2 Amino Acid Position") +
+        ggtitle("TYK2 // FlowDMS") +
+        theme_pubr(base_size = 14, legend = "right")
+
+fig8 <- bind_heat_z / stab_heat_z
+ggsave("../dataviz/patent/Fig8.pdf", fig8, width = 18, height = 10)
+```
+
+</details>
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+options(repr.plot.width = 18, repr.plot.height = 10)
+fig8
+```
+
+</details>
+
+![](TYK2-Two-Color-Plots_files/figure-commonmark/cell-4-output-1.png)
+
+### Figure 15
+
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+sumstats_resist <- read_tsv("../paper/sumstats/TYK2-combined-cleaned.contrast.tsv",
+                            show_col_types = FALSE) %>%
+    filter(assay == "assay4",
+           condition %in% c("IFNalpha+BMS-986202_1e-06", "IFNalpha+Zasocitinib_1e-06"),
+           aa != "*") %>%
+    select(pos, condition, aa, statistic_contrast, fdr_contrast) %>%
+    pivot_wider(names_from = condition, values_from = c(statistic_contrast, fdr_contrast)) %>%
+    mutate(`FDR < 0.01` = case_when(`fdr_contrast_IFNalpha+BMS-986202_1e-06` < 0.01 & `fdr_contrast_IFNalpha+Zasocitinib_1e-06` < 0.01 ~ "Both",
+                           `fdr_contrast_IFNalpha+BMS-986202_1e-06` < 0.01 & `fdr_contrast_IFNalpha+Zasocitinib_1e-06` > 0.01 ~ "BMS-986202",
+                           `fdr_contrast_IFNalpha+BMS-986202_1e-06` > 0.01 & `fdr_contrast_IFNalpha+Zasocitinib_1e-06` < 0.01 ~ "Zasocitinib",
+                           TRUE ~ "Neither"),
+          `FDR < 0.01` = if_else(`statistic_contrast_IFNalpha+Zasocitinib_1e-06` < 0 & `statistic_contrast_IFNalpha+BMS-986202_1e-06` < 0,
+                                 "Neither",
+                                 `FDR < 0.01`))
+
+fig15 <- ggplot(sumstats_resist) +
+    geom_point(aes(x = `statistic_contrast_IFNalpha+BMS-986202_1e-06`,
+                   y = `statistic_contrast_IFNalpha+Zasocitinib_1e-06`,
+                   pch = `FDR < 0.01`), size = 3) +
+    theme_pubr(base_size = 14) +
+    xlab("Variant Z-Statistic, Drug 1 (1uM, >IC99)") +
+    ylab("Variant Z-Statistic, Drug 2 (1uM, >IC99)") +
+    scale_shape_manual(values = c("Neither" = 1,
+                                  "BMS-986202" = 5,
+                                  "Zasocitinib" = 4,
+                                  "Both" = 12))
+
+ggsave("../dataviz/patent/Fig15.pdf", fig15, width = 8, height = 8)
+```
+
+</details>
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+options(repr.plot.width = 8, repr.plot.height = 8)
+fig15
+```
+
+</details>
+
+![](TYK2-Two-Color-Plots_files/figure-commonmark/cell-6-output-1.png)
+
+### Figure 16
+
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+compute_difference <- function(test, control, sumstats) {
+    
+    df1 <- sumstats %>% filter(condition == test) %>% select(pos, aa, log2FoldChange, log2StdError)
+    df2 <- sumstats %>% filter(condition == control) %>% select(pos, aa, log2FoldChange, log2StdError)
+    
+    df <- inner_join(df1, df2,
+                     by = c("pos", "aa"))
+    
+    new_stats <- df %>%
+        mutate(estimate = log2FoldChange.x - log2FoldChange.y,
+               std.error = sqrt(log2StdError.x^2 + log2StdError.y^2)) %>%
+        select(pos, aa, estimate, std.error) %>%
+        ungroup()
+    
+    return(new_stats)
+    
+}
+```
+
+</details>
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+sumstats_potentiate <- read_tsv("../paper/sumstats/TYK2-combined-cleaned.contrast.tsv",
+                                show_col_types = FALSE) %>%
+    filter(assay == "assay7",
+           condition %in% c("IFNalpha100+BMS-986202_2e-08", "IFNalpha100+Zasocitinib_7e-09", "IFNalpha100_0"),
+           aa != "*") 
+
+bms_poten <- compute_difference(test = "IFNalpha100+BMS-986202_2e-08",
+                                control = "IFNalpha100_0",
+                                sumstats_potentiate) %>%
+    mutate(condition = "BMS-986202")
+
+zaso_poten <- compute_difference(test = "IFNalpha100+Zasocitinib_7e-09",
+                                control = "IFNalpha100_0",
+                                sumstats_potentiate) %>%
+    mutate(condition = "Zasocitinib")
+
+contrast_potentiate <- bind_rows(bms_poten, zaso_poten) %>%
+    mutate(statistic = estimate / std.error,
+           p.value = pmin(pnorm(statistic, mean = 0, sd = 1)*2,
+                                 (1-pnorm(statistic, sd = 1))*2),
+           fdr = p.adjust(p.value, method = "BH")) %>%
+    select(pos, aa, statistic, fdr, condition) %>%
+    pivot_wider(names_from = condition, values_from = c(statistic, fdr)) %>%
+    mutate("FDR < 0.01" = case_when(`fdr_BMS-986202` < 0.01 & `fdr_Zasocitinib` > 0.01 ~ "BMS-986202",
+                               `fdr_BMS-986202` > 0.01 & `fdr_Zasocitinib` < 0.01 ~ "Zasocitinib",
+                               `fdr_BMS-986202` < 0.01 & `fdr_Zasocitinib` < 0.01 ~ "Both",
+                               TRUE ~ "Neither"),
+           `FDR < 0.01` = if_else(`statistic_BMS-986202` > 0,
+                                 "Neither",
+                                 `FDR < 0.01`))
+
+fig16 <- ggplot(contrast_potentiate) +
+    geom_point(aes(x = `statistic_BMS-986202`,
+                   y = `statistic_Zasocitinib`,
+                   pch = `FDR < 0.01`), size = 3) +
+    theme_pubr(base_size = 14) +
+    xlab("Variant Z-Statistic, Drug 1 (IC75), Relative to IFN-alpha") +
+    ylab("Variant Z-Statistic, Drug 2 (IC75), Relative to IFN-alpha") +
+    scale_shape_manual(values = c("Neither" = 1,
+                                  "BMS-986202" = 5,
+                                  "Zasocitinib" = 4,
+                                  "Both" = 12))
+
+ggsave("../dataviz/patent/Fig16.pdf", fig16, width = 8, height = 8)
+```
+
+</details>
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+options(repr.plot.width = 8, repr.plot.height = 8)
+fig16
+```
+
+</details>
+
+![](TYK2-Two-Color-Plots_files/figure-commonmark/cell-9-output-1.png)
+
+### Figure 20A

@@ -14,6 +14,20 @@ library(tidyverse)
 
 </details>
 
+    Loading required package: ggplot2
+
+    ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ✔ dplyr     1.1.4     ✔ readr     2.1.5
+    ✔ forcats   1.0.0     ✔ stringr   1.5.1
+    ✔ lubridate 1.9.4     ✔ tibble    3.2.1
+    ✔ purrr     1.0.2     ✔ tidyr     1.3.1
+    ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ✖ readr::col_factor() masks scales::col_factor()
+    ✖ purrr::discard()    masks scales::discard()
+    ✖ dplyr::filter()     masks stats::filter()
+    ✖ dplyr::lag()        masks stats::lag()
+    ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+
 ### Figure 8
 
 <details class="code-fold">
@@ -76,25 +90,26 @@ sumstats_resist <- read_tsv("../paper/sumstats/TYK2-combined-cleaned.contrast.ts
            condition %in% c("IFNalpha+BMS-986202_1e-06", "IFNalpha+Zasocitinib_1e-06"),
            aa != "*") %>%
     select(pos, condition, aa, statistic_contrast, fdr_contrast) %>%
+    mutate(condition = if_else(condition == "IFNalpha+BMS-986202_1e-06", "drug1", "drug2")) %>%
     pivot_wider(names_from = condition, values_from = c(statistic_contrast, fdr_contrast)) %>%
-    mutate(`FDR < 0.01` = case_when(`fdr_contrast_IFNalpha+BMS-986202_1e-06` < 0.01 & `fdr_contrast_IFNalpha+Zasocitinib_1e-06` < 0.01 ~ "Both",
-                           `fdr_contrast_IFNalpha+BMS-986202_1e-06` < 0.01 & `fdr_contrast_IFNalpha+Zasocitinib_1e-06` > 0.01 ~ "BMS-986202",
-                           `fdr_contrast_IFNalpha+BMS-986202_1e-06` > 0.01 & `fdr_contrast_IFNalpha+Zasocitinib_1e-06` < 0.01 ~ "Zasocitinib",
-                           TRUE ~ "Neither"),
-          `FDR < 0.01` = if_else(`statistic_contrast_IFNalpha+Zasocitinib_1e-06` < 0 & `statistic_contrast_IFNalpha+BMS-986202_1e-06` < 0,
-                                 "Neither",
-                                 `FDR < 0.01`))
+    mutate(Resistance = case_when(fdr_contrast_drug1 < 0.01 & fdr_contrast_drug2 < 0.01 ~ "Both",
+                                   fdr_contrast_drug1 < 0.01 & fdr_contrast_drug2 > 0.01 ~ "Drug 1 Only",
+                                   fdr_contrast_drug1 > 0.01 & fdr_contrast_drug2 < 0.01 ~ "Drug 2 Only",
+                                   TRUE ~ "Neither"),
+          Resistance = if_else(statistic_contrast_drug2 < 0 & statistic_contrast_drug1 < 0,
+                                "Neither",
+                                Resistance))
 
 fig15 <- ggplot(sumstats_resist) +
-    geom_point(aes(x = `statistic_contrast_IFNalpha+BMS-986202_1e-06`,
-                   y = `statistic_contrast_IFNalpha+Zasocitinib_1e-06`,
-                   pch = `FDR < 0.01`), size = 3) +
+    geom_point(aes(x = statistic_contrast_drug1,
+                   y = statistic_contrast_drug2,
+                   pch = Resistance), size = 3) +
     theme_pubr(base_size = 14) +
     xlab("Variant Z-Statistic, Drug 1 (1uM, >IC99)") +
     ylab("Variant Z-Statistic, Drug 2 (1uM, >IC99)") +
     scale_shape_manual(values = c("Neither" = 1,
-                                  "BMS-986202" = 5,
-                                  "Zasocitinib" = 4,
+                                  "Drug 1 Only" = 5,
+                                  "Drug 2 Only" = 4,
                                   "Both" = 12))
 
 ggsave("../dataviz/patent/Fig15.pdf", fig15, width = 8, height = 8)
@@ -152,12 +167,12 @@ sumstats_potentiate <- read_tsv("../paper/sumstats/TYK2-combined-cleaned.contras
 bms_poten <- compute_difference(test = "IFNalpha100+BMS-986202_2e-08",
                                 control = "IFNalpha100_0",
                                 sumstats_potentiate) %>%
-    mutate(condition = "BMS-986202")
+    mutate(condition = "drug1")
 
 zaso_poten <- compute_difference(test = "IFNalpha100+Zasocitinib_7e-09",
                                 control = "IFNalpha100_0",
                                 sumstats_potentiate) %>%
-    mutate(condition = "Zasocitinib")
+    mutate(condition = "drug2")
 
 contrast_potentiate <- bind_rows(bms_poten, zaso_poten) %>%
     mutate(statistic = estimate / std.error,
@@ -166,24 +181,24 @@ contrast_potentiate <- bind_rows(bms_poten, zaso_poten) %>%
            fdr = p.adjust(p.value, method = "BH")) %>%
     select(pos, aa, statistic, fdr, condition) %>%
     pivot_wider(names_from = condition, values_from = c(statistic, fdr)) %>%
-    mutate("FDR < 0.01" = case_when(`fdr_BMS-986202` < 0.01 & `fdr_Zasocitinib` > 0.01 ~ "BMS-986202",
-                               `fdr_BMS-986202` > 0.01 & `fdr_Zasocitinib` < 0.01 ~ "Zasocitinib",
-                               `fdr_BMS-986202` < 0.01 & `fdr_Zasocitinib` < 0.01 ~ "Both",
+    mutate(Potentiation = case_when(fdr_drug1 < 0.01 & fdr_drug2 > 0.01 ~ "Drug 1 Only",
+                               fdr_drug1 > 0.01 & fdr_drug2 < 0.01 ~ "Drug 2 Only",
+                               fdr_drug1 < 0.01 & fdr_drug2 < 0.01 ~ "Both",
                                TRUE ~ "Neither"),
-           `FDR < 0.01` = if_else(`statistic_BMS-986202` > 0,
+           Potentiation = if_else(statistic_drug1 > 0,
                                  "Neither",
-                                 `FDR < 0.01`))
+                                 Potentiation))
 
 fig16 <- ggplot(contrast_potentiate) +
-    geom_point(aes(x = `statistic_BMS-986202`,
-                   y = `statistic_Zasocitinib`,
-                   pch = `FDR < 0.01`), size = 3) +
+    geom_point(aes(x = statistic_drug1,
+                   y = statistic_drug2,
+                   pch = Potentiation), size = 3) +
     theme_pubr(base_size = 14) +
     xlab("Variant Z-Statistic, Drug 1 (IC75), Relative to IFN-alpha") +
     ylab("Variant Z-Statistic, Drug 2 (IC75), Relative to IFN-alpha") +
     scale_shape_manual(values = c("Neither" = 1,
-                                  "BMS-986202" = 5,
-                                  "Zasocitinib" = 4,
+                                  "Drug 1 Only" = 5,
+                                  "Drug 2 Only" = 4,
                                   "Both" = 12))
 
 ggsave("../dataviz/patent/Fig16.pdf", fig16, width = 8, height = 8)
@@ -326,7 +341,6 @@ amsh_long <- cre %>%
            compound == "aMSH") %>%    
         ggplot(aes(y = pos, x = fct_rev(aa), fill = statistic)) +
         geom_tile() +
-        #coord_fixed(ratio = 1 / 3) +
         scale_fill_scico(palette = "grayC", limits = c(-10, 0), oob = scales::squish) +
         theme_pubr(base_size = 10) +
         theme(legend.position = "top",

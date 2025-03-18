@@ -203,3 +203,150 @@ fig16
 ![](TYK2-Two-Color-Plots_files/figure-commonmark/cell-9-output-1.png)
 
 ### Figure 20A
+
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+lehner_grouping <- c("*", "D", "E", "R", "H", "K", "S", "T", "N", "Q", "C", "G", "P", "A", "V", "I", "L", "M", "F", "W", "Y")
+
+uas_annotation <- tribble(
+  ~compound, ~concentration, ~dose,
+  "aMSH", "1e-06", "high",
+  "aMSH", "5e-08", "medium",
+  "aMSH", "2e-08", "low",
+  "None", "0", "zero",
+  "THIQ", "1e-07", "high",
+  "THIQ", "9e-09", "medium",
+  "THIQ", "3e-09", "low",
+)
+
+cre_annotation <- tribble(
+  ~compound, ~concentration, ~dose,
+  "aMSH", "2e-08", "high",
+  "aMSH", "5e-09", "medium",
+  "aMSH", "5e-10", "low",
+  "Forsk", "2.5e-05", NA,
+  "None", "0", "zero",
+  "THIQ", "1.2e-08", "high",
+  "THIQ", "4e-09", "medium",
+  "THIQ", "4e-10", "low"
+)
+
+uas_unnorm <- read_tsv("../../dms/mc4r-dms/sumstats/MC4R-DMS8-Gq-unnormalized.tsv",
+                       show_col_types = FALSE) %>%
+  separate(
+    contrast,
+    into = c("compound", "concentration", "norm"),
+    remove = FALSE,
+    sep = "_"
+  ) %>%
+  inner_join(uas_annotation, by = c("compound", "concentration"))
+
+cre_unnorm <- read_tsv("../../dms/mc4r-dms/sumstats/MC4R-DMS5-Gs-unnormalized.tsv",
+                       show_col_types = FALSE) %>%
+  separate(
+    contrast,
+    into = c("compound", "concentration", "norm"),
+    remove = FALSE,
+    sep = "_"
+  ) %>%
+  inner_join(cre_annotation, by = c("compound", "concentration"))
+
+unnorm_combo <- bind_rows(
+  gs = cre_unnorm,
+  gq = uas_unnorm,
+  .id = "pathway"
+) %>%
+  mutate(aa = if_else(aa == "X", "*", aa))
+
+heatmap_examples <- unnorm_combo %>%
+    filter(compound != "Forsk") %>%
+    mutate(
+    pathway = factor(pathway, levels = c("gs", "gq")),
+    aa = factor(aa, levels = lehner_grouping),
+    dose = factor(dose, levels = c("zero", "low", "medium", "high")),
+    compound = if_else(compound == "None", "aMSH", compound),
+    compound = factor(compound, levels = c("aMSH", "THIQ", "None", "Forsk"))) %>%
+        ggplot(aes(x = pos, y = aa, fill = statistic)) +
+        geom_tile() +
+        facet_grid(cols = vars(pathway, compound), rows = vars(dose)) +
+        coord_equal() +
+        scale_fill_scico(palette = "grayC", limits = c(-10, 0), oob = scales::squish) +
+        theme_void() +
+        theme(legend.position = "right")
+
+ggsave("../dataviz/patent/Fig20A-1.pdf", heatmap_examples,
+       width = 15, height = 2)
+```
+
+</details>
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+options(repr.plot.width = 15, repr.plot.height = 2)
+heatmap_examples
+```
+
+</details>
+
+![](TYK2-Two-Color-Plots_files/figure-commonmark/cell-11-output-1.png)
+
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+cre_dose <- tribble(
+  ~contrast, ~dose, ~compound, ~concentration,
+  "None_0_minus_Forsk_2.5e-05", "zero", "None", NA,
+  "aMSH_2e-08_minus_Forsk_2.5e-05", "high", "aMSH", "2e-08",
+  "aMSH_5e-09_minus_Forsk_2.5e-05", "medium", "aMSH", "5e-09",
+  "aMSH_5e-10_minus_Forsk_2.5e-05", "low", "aMSH", "5e-10",
+  "THIQ_1.2e-08_minus_Forsk_2.5e-05", "high", "THIQ", "1.2e-08",
+  "THIQ_4e-09_minus_Forsk_2.5e-05", "medium", "THIQ", "4e-09",
+  "THIQ_4e-10_minus_Forsk_2.5e-05", "low", "THIQ", "4e-10"
+) %>%
+  mutate(dose = factor(dose, levels = c("zero", "low", "medium", "high")))
+
+cre <- read_tsv("../../dms/mc4r-dms/sumstats/MC4R-DMS5-Gs.tsv",
+                show_col_types = FALSE) %>%
+  inner_join(cre_dose, by = "contrast") %>%
+  rename(
+    log2FoldChange = log2ContrastEstimate,
+    log2StdError = log2ContrastError
+  ) %>%
+  mutate(
+    aa = if_else(aa == "X", "*", aa),
+    aa = factor(aa, levels = lehner_grouping)
+  )
+
+amsh_long <- cre %>%
+    filter(dose == "low",
+           compound == "aMSH") %>%    
+        ggplot(aes(y = pos, x = fct_rev(aa), fill = statistic)) +
+        geom_tile() +
+        #coord_fixed(ratio = 1 / 3) +
+        scale_fill_scico(palette = "grayC", limits = c(-10, 0), oob = scales::squish) +
+        theme_pubr(base_size = 10) +
+        theme(legend.position = "top",
+              axis.line = element_blank()) +
+        xlab("") +
+        ylab("Residue")
+
+ggsave("../dataviz/patent/Fig20A-2.pdf", amsh_long,
+       width = 4, height = 15)
+```
+
+</details>
+<details class="code-fold">
+<summary>Code</summary>
+
+``` r
+options(repr.plot.width = 4, repr.plot.height = 15)
+amsh_long
+```
+
+</details>
+
+![](TYK2-Two-Color-Plots_files/figure-commonmark/cell-13-output-1.png)

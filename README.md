@@ -4,6 +4,7 @@ Welcome! This repository contains analyses, code, and summary statistics related
 
 ```
 ├── data
+├── docker
 ├── paper
 ├── src
 ├── sumstats

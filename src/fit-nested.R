@@ -3,7 +3,7 @@
 
 library(argparse)
 library(tidyverse)
-source("src/model/model_utils.R")
+source("/bms-dms/src/model_utils.R")
 
 RNGkind("L'Ecuyer-CMRG")
 set.seed(1)

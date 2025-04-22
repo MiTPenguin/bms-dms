@@ -23,8 +23,7 @@ docker build -t analysis-image .
 Then, run an instance of the image, enter the initiated container, and open the nix environment:
 
 ```
-docker run \
-  --rm -dit \
+docker run --rm -dit \
   --name analysis-container \
   -v ~/bms-dms:/bms-dms \
   analysis-image:latest

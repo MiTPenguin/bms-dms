@@ -1,3 +1,2 @@
 pipeline
-.ipynb_checkpoints
-.Rproj.user
+*ipynb*

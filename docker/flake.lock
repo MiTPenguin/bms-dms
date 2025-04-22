@@ -1,0 +1,62 @@
+{
+  "nodes": {
+    "cmdstanr": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1717706422,
+        "narHash": "sha256-SNUJOqL18TIkPV/6hV7Ed/D/Z6iWrYzQhFpJIyXv9sk=",
+        "owner": "stan-dev",
+        "repo": "cmdstanr",
+        "rev": "02259ef7aa2a8b1c8de2fa3fc42a9feafd789288",
+        "type": "github"
+      },
+      "original": {
+        "owner": "stan-dev",
+        "repo": "cmdstanr",
+        "rev": "02259ef7aa2a8b1c8de2fa3fc42a9feafd789288",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1735563628,
+        "narHash": "sha256-OnSAY7XDSx7CtDoqNh8jwVwh4xNL/2HaJxGjryLWzX8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "b134951a4c9f3c995fd7be05f3243f8ecd65d798",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "b134951a4c9f3c995fd7be05f3243f8ecd65d798",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "cmdstanr": "cmdstanr",
+        "nixpkgs": "nixpkgs",
+        "rpkgs": "rpkgs"
+      }
+    },
+    "rpkgs": {
+      "locked": {
+        "lastModified": 1736864620,
+        "narHash": "sha256-MYnwwLrhJhqRmTBia6DbC3ZV34L0QoD3x0L+KekRRic=",
+        "owner": "rstats-on-nix",
+        "repo": "nixpkgs",
+        "rev": "c2c46d90ff2d7e7f2c4982cab38de3bb3cab0225",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rstats-on-nix",
+        "repo": "nixpkgs",
+        "rev": "c2c46d90ff2d7e7f2c4982cab38de3bb3cab0225",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

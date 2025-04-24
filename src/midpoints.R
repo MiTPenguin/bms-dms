@@ -3,8 +3,7 @@
 library(argparse)
 library(furrr)
 library(tidyverse)
-source("src/model_utils.R")
-source("src/dms-analysis-utils.R")
+source("/bms-dms/src/model_utils.R")
 
 plan(multicore, workers = 40)
 

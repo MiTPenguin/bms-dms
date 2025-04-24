@@ -11,6 +11,50 @@ library(emmeans)
 library(future.callr)
 library(tidyverse)
 
+scale_fill_scico_mid <- function(..., mid = 0, alpha = NULL, begin = 0, end = 1, direction = 1, reverse = TRUE ,palette = "broc") {
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+        stop("ggplot2 is required for this functionality", call. = FALSE)
+  }
+  force(mid)
+  ggplot2::continuous_scale(
+    aesthetics = "fill", 
+    scale_name = "gradient2",
+    palette = scales::gradient_n_pal(
+      colours = scico(256, alpha, begin, end, direction, palette), 
+      values = NULL, space = "Lab"),
+    guide="colourbar",
+    rescaler = function(x, to = c(0, 1), from = range(x, na.rm = TRUE)) {
+      scales::rescale_mid(x, to, from, mid)
+    },
+    ...
+  )
+}
+
+generate_resamples <- function(mean_vec, se_vec, metadata, num){
+    
+    df <- MASS::mvrnorm(n = num,
+                  mu = mean_vec,
+                  Sigma = diag(se_vec^2)) %>%
+        as_tibble() %>%
+        mutate(n = row_number()) %>%
+        rename(c("0.125" = "V1", "0.375" = "V2", "0.625" = "V3", "0.875" = "V4")) %>%
+        pivot_longer(names_to = "bin", values_to = "value", `0.125`:`0.875`)
+
+    df_score <- df %>%
+        group_by(n) %>% 
+        mutate(bin = as.numeric(bin),
+               value = (value - min(value)) / sum(value - min(value))) %>%
+        summarize(score = sum(bin*value)) 
+    
+    return(bind_cols(tibble(
+        "score_mean" = mean(df_score$score),
+        "score_se" = sd(df_score$score)),
+        "chunk" = metadata[1],
+        "pos" = metadata[2],
+        "aa" = metadata[3]))
+
+}
+
 select_complete_mutants <- function(df, cvar) {
 
     expected_conditions <- df %>%

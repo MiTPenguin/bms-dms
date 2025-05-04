@@ -4,8 +4,10 @@ Welcome! This repository contains analyses, code, and summary statistics related
 
 ```
 ├── aux
+├── barcode_maps
 ├── docker
 ├── fastq
+├── mapped_counts
 ├── paper
 ├── src
 └── sumstats

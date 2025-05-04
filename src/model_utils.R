@@ -11,25 +11,6 @@ library(emmeans)
 library(future.callr)
 library(tidyverse)
 
-scale_fill_scico_mid <- function(..., mid = 0, alpha = NULL, begin = 0, end = 1, direction = 1, reverse = TRUE ,palette = "broc") {
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-        stop("ggplot2 is required for this functionality", call. = FALSE)
-  }
-  force(mid)
-  ggplot2::continuous_scale(
-    aesthetics = "fill", 
-    scale_name = "gradient2",
-    palette = scales::gradient_n_pal(
-      colours = scico(256, alpha, begin, end, direction, palette), 
-      values = NULL, space = "Lab"),
-    guide="colourbar",
-    rescaler = function(x, to = c(0, 1), from = range(x, na.rm = TRUE)) {
-      scales::rescale_mid(x, to, from, mid)
-    },
-    ...
-  )
-}
-
 generate_resamples <- function(mean_vec, se_vec, metadata, num){
     
     df <- MASS::mvrnorm(n = num,
@@ -87,12 +68,8 @@ generate_formula <- function(keyword = "global") {
 
     if (keyword == "global") {
         formula <- as.formula(count ~ -1 + condition + condition:mut_aa + (1 | barcode) + offset(stop_counts))
-    } else if (keyword == "interaction") {
-        formula <- as.formula(count ~ -1 + condition + mut_aa + condition:mut_aa + (1 | barcode) + offset(stop_counts))
     } else if (keyword == "flow") {
         formula <- as.formula(count ~ -1 + condition_conc + condition_conc:mut_aa + (1 | barcode))
-    } else if (keyword == "drc") {
-        formula <- as.formula(count ~ -1 + condition + condition:mut_aa + (1 | condition:barcode) + offset(stop_counts))
     } else {
         stop("Invalid model type")
     }
@@ -100,19 +77,6 @@ generate_formula <- function(keyword = "global") {
 }
 
 rand_effect <- function(data, mod_path, formula) {
-
-    # Model fitting parameters:
-    ## L-BFGS-B is a particularly memory efficient quasi-Newton method
-
-    ## start is the starting value for the model, and given the log link
-    ### this value closely matches the end of the optimization
-    ### for most positions and seemed to make sense
-
-    ## rel.tol is the relative tolerance for convergence
-    ## pgtol is the tolerance for the projected gradient
-    ### Both of these are reduced to ensure the model converges, and
-    ### decreasing them did not obviously alter model fit, though
-    ### a formal grid search was not performed
 
     to_return <- tryCatch({
 
@@ -195,5 +159,6 @@ rand_effect_wrap <- function(mapped_counts, form, nestvars, model_output_path, d
         select(all_of(nestvars), pos, sumstats) %>%
         unnest_wider(sumstats)
 
-  return(sumstats_wide)
+    return(sumstats_wide)
+
 }

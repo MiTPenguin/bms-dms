@@ -49,7 +49,7 @@ nested_coef <- nested_sumstats %>%
 nested_marginals <- nested_sumstats %>%
     select(-coefs) %>%
     unnest(marginals) %>%
-    select(-df, -statistic, -p.value) %>%
+    select(-c("df", "statistic", "p.value")) %>%
     rename("aa" = "mut_aa")
 
 # Write summary statistics

@@ -38,8 +38,19 @@ form <- generate_formula(model_type)
 nested_sumstats <- rand_effect_wrap(mapped_counts, form, "chunk", model_output_path, FALSE, nworkers)
 
 # Extract and format coefficients and marginals
-nested_coef <- nested_sumstats %>% select(-marginals) %>% unnest(coefs)
-nested_marginals <- nested_sumstats %>% select(-coefs) %>% unnest(marginals)
+nested_coef <- nested_sumstats %>%
+    select(-marginals) %>%
+    unnest(coefs) %>%
+    select(-c("effect", "component", "group", "dispersion")) %>%
+    filter(str_detect(term, "mut")) %>%
+    separate(term, into = c("condition", "aa"), sep = ":") %>%
+    mutate(condition = str_remove(condition, "condition"), aa = str_remove(aa, "mut_aa"))
+
+nested_marginals <- nested_sumstats %>%
+    select(-coefs) %>%
+    unnest(marginals) %>%
+    select(-df, -statistic, -p.value) %>%
+    rename("aa" = "mut_aa")
 
 # Write summary statistics
 write_tsv(nested_coef, outfile)

@@ -8,7 +8,7 @@ Rscript --vanilla fit-preprocess.R \
     ../mapped_counts/TYK2-run1.mapped-counts.tsv \
     ../barcode_maps/tyk2.bcmap-final.tsv \
     run1/sample-properties-rna.tsv \
-    run1
+    run1 &
 
 Rscript --vanilla fit-preprocess.R \
     ../mapped_counts/TYK2-run2.mapped-counts.tsv \

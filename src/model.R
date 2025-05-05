@@ -23,8 +23,8 @@ mapped_counts_file <- args$file
 nworkers <- args$nworkers
 
 outfile <- args$outfile
-model_output_path <- str_replace(args$outfile, ".tsv", "_model_objects/")
-marginals_outfile <- str_replace(args$outfile, ".tsv", ".marginals.tsv")
+model_output_path <- str_replace(args$outfile, ".sumstats.tsv", "_model_objects/")
+marginals_outfile <- str_replace(args$outfile, ".sumstats.tsv", ".marginals.tsv")
 
 dir.create(model_output_path)
 

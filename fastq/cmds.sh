@@ -8,22 +8,22 @@ Rscript --vanilla fit-preprocess.R \
     ../mapped_counts/TYK2-run1.mapped-counts.tsv \
     ../barcode_maps/tyk2.bcmap-final.tsv \
     run1/sample-properties-rna.tsv \
-    run1 &
+    run1
 
 Rscript --vanilla fit-preprocess.R \
     ../mapped_counts/TYK2-run2.mapped-counts.tsv \
     ../barcode_maps/tyk2.bcmap-final.tsv \
     run2/sample-properties-rna.tsv \
-    run2 &
+    run2
 
 Rscript --vanilla fit-preprocess.R \
     ../mapped_counts/TYK2-run3.mapped-counts.tsv \
     ../barcode_maps/tyk2.bcmap-final.tsv \
     run3/sample-properties-rna.tsv \
-    run3 &
+    run3
 
 Rscript --vanilla fit-preprocess.R \
     ../mapped_counts/TYK2-vamp2.mapped-counts.tsv \
     ../barcode_maps/tyk2-vamp.bcmap-final.tsv \
     vamp2/sample-properties-rna.tsv \
-    vamp2 &
+    vamp2

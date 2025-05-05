@@ -14,8 +14,8 @@ parser$add_argument("-f", "--file", type = "character",
     help = "Mapped Counts File", metavar = "file")
 parser$add_argument("-o", "--outfile", type = "character",
     help = "Output File", metavar = "outfile")
-parser$add_argument("-m", "--model", type = "character",
-    help = "Model Type", metavar = "model")
+parser$add_argument("-m", "--model_type", type = "character",
+    help = "Model Type", metavar = "model_type")
 parser$add_argument("-n", "--nworkers", type = "numeric", default = 35,
     help = "Number of workers to use for model fitting", metavar = "nworkers")
 

@@ -30,7 +30,7 @@ dir.create(model_output_path)
 
 mapped_counts <- read_tsv(mapped_counts_file) %>%
     mutate(condition_conc = as.factor(condition_conc),
-           condition = relevel(as.factor(condition), ref = "DMSO_0"),
+           condition = relevel(as.factor(condition), ref = "None_0"),
            mut_aa = relevel(as.factor(mut_aa), ref = "WT"))
 
 # Set up formula and run model

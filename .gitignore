@@ -1,5 +1,5 @@
 pipeline
 *ipynb*
 *fastq*
-*.bcmap-final.tsv
+*bcmap*
 *.mapped-counts.tsv

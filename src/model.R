@@ -23,6 +23,7 @@ parser$add_argument("-n", "--nworkers", type = "numeric", default = 35,
 args <- parser$parse_args()
 mapped_counts_file <- args$file
 nworkers <- args$nworkers
+model_type <- args$model_type
 
 outfile <- args$outfile
 model_output_path <- str_replace(args$outfile, ".sumstats.tsv", "_model_objects/")

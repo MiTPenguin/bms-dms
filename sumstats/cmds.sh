@@ -23,3 +23,7 @@ Rscript --vanilla src/model.R \
     --outfile sumstats/TYK2-vamp2.sumstats.tsv \
     --nworkers 50 \
     --model flow
+
+Rscript --vanilla src/midpoints.R \
+    --input sumstats/TYK2-vamp2.sumstats.tsv \
+    --output sumstats/TYK2-vamp2.midpoints.tsv

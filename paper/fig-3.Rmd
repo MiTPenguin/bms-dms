@@ -55,27 +55,11 @@ ggplot(bms_resist) +
     ggtitle("IFN-alpha + BMS-986202, Normalized to Untreated")
 ```
 
-### Binding Site (GoF) Comparisons
-
-```{r bms-pos-dist, fig.width = 15, fig.height = 7}
-pos_counts <- contrast_sumstats_bms %>%
-  filter(fdr_contrast < 0.01, log2Contrast > 0) %>%
-  count(pos, condition, assay)
-
-ggplot(pos_counts) +
-  geom_bar(aes(x = pos, y = n), stat = "identity") +
-  coord_cartesian(xlim = c(1, 1147)) +
-  facet_wrap(~condition+assay, ncol = 1) +
-  xlab("TYK2 Position") + ylab("Number of Significant Positive Variants")
-
-```
-
 ### Chemical Footprints
 
-Group assignment for Zasocitinib and BMS-986202 drug resistance profiles:
 ```{r}
 sumstats_resist <- contrast_sumstats %>%
-    filter(assay == "assay4", condition %in% c("IFNalpha+Zasocitinib_1e-06", "IFNalpha+BMS-986202_2e-08")) %>%
+    filter(assay == "assay2", condition %in% c("IFNalpha+Zasocitinib_1e-06", "IFNalpha+BMS-986202_2e-08")) %>%
     select(pos, condition, aa, statistic, fdr_contrast) %>%
     pivot_wider(names_from = condition, values_from = c(statistic, fdr_contrast)) %>%
     mutate(`FDR < 0.01` = case_when(`fdr_contrast_IFNalpha+BMS-986202_2e-08` < 0.01 & `fdr_contrast_IFNalpha+Zasocitinib_1e-06` < 0.01 ~ "Both",
@@ -92,10 +76,9 @@ prepped_data_resist <- sumstats_resist %>% filter(pos %in% sig_vars_resist)
 names(prepped_data_resist) <- c("pos", "aa", "Z_BMS", "FDR_BMS")
 ```
 
-Group assignment for Zasocitinib and BMS-986202 drug potentiation profiles:
 ```{r}
 sumstats_potentiate <- contrast_sumstats %>%
-    filter(assay == "assay7", condition %in% c("IFNalpha100+Zasocitinib_7e-09", "IFNalpha100+BMS-986202_2e-08")) %>%
+    filter(assay == "assay3", condition %in% c("IFNalpha100+Zasocitinib_7e-09", "IFNalpha100+BMS-986202_2e-08")) %>%
     select(pos, condition, aa, statistic, fdr_contrast) %>%
     pivot_wider(names_from = condition, values_from = c(statistic, fdr_contrast)) %>%
     mutate(`FDR < 0.01` = case_when(`fdr_contrast_IFNalpha100+BMS-986202_2e-08` < 0.01 & `fdr_contrast_IFNalpha100+Zasocitinib_7e-09` < 0.01 ~ "Both",

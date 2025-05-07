@@ -49,7 +49,7 @@ ggplot(bms_resist) +
                          y = -log10(fdr_contrast),
                          color = if_else(fdr_contrast < 0.01, "red", "black"),
                          label = str_c(pos, aa)),
-                     size = 2, nudge_x = 1) +
+                     size = 5, nudge_x = 1.25) +
     xlab("Log2 Fold Change") + ylab("-log10(FDR)") +
     scale_color_identity() +
     ggtitle("IFN-alpha + BMS-986202, Normalized to Untreated")

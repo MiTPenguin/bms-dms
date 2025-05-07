@@ -55,31 +55,26 @@ scale_fill_scico_mid <- function(..., mid = 0, alpha = NULL, begin = 0, end = 1,
 
 ```{r loading}
 
-assay3 <- read_tsv("sumstats/TYK2-run3-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
+assay1 <- read_tsv("../sumstats/TYK2-run1.sumstats.tsv", show_col_types = FALSE) %>%
+  mutate(assay = "assay1")
+
+assay2 <- read_tsv("../sumstats/TYK2-run2.sumstats.tsv", show_col_types = FALSE) %>%
+  mutate(assay = "assay2")
+
+assay3 <- read_tsv("../sumstats/TYK2-run3.sumstats.tsv", show_col_types = FALSE) %>%
   mutate(assay = "assay3")
 
-assay4 <- read_tsv("sumstats/TYK2-run4-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
-  mutate(assay = "assay4")
-
-assay7 <- read_tsv("sumstats/TYK2-run7-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
-  mutate(assay = "assay7")
-
-assay_data <- bind_rows(assay3, assay4, assay7)  %>%
+assay_data <- bind_rows(assay1, assay2, assay3)  %>%
     group_by(assay) %>%
     mutate(fdr = p.adjust(p.value, method = "BH")) %>%
     ungroup()
 
-treated <- assay_data %>%
-  filter(condition != "None_0") %>%
-  mutate(condition = if_else(condition == "IFNalphaWithDrug_100",
-                             "IFNalpha+BMS-986202_1e-05",
-                             condition))
-
+treated <- assay_data %>% filter(condition != "None_0")
 untreated <- assay_data %>%
   filter(condition == "None_0") %>%
   rename("log2FoldChange_Control" = "log2FoldChange",
          "log2StdError_Control" = "log2StdError") %>%
-  select(-condition, -statistic, -p.value, -fdr, -version)
+  select(-condition, -statistic, -p.value, -fdr)
 
 sumstats <- inner_join(treated, untreated, by = c("chunk", "pos", "aa", "assay"))
 contrast_sumstats <- sumstats %>%
@@ -91,7 +86,7 @@ contrast_sumstats <- sumstats %>%
          fdr_contrast = p.adjust(p.value_contrast, method = "BH")) %>%
   ungroup()
 
-write_tsv(contrast_sumstats, "sumstats/TYK2-combined-cleaned.contrast.tsv")
+write_tsv(contrast_sumstats, "../sumstats/TYK2.contrast.tsv")
 ```
 
 # Figure 1

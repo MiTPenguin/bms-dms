@@ -12,31 +12,16 @@ aa_order <- c("G","A","P","K","H",
               "R","T","S","C","E",
               "D","M","V","I","L",
               "Y","W","F","Q","N")
-
-sumstats_bms <- sumstats %>% filter(grepl("BMS", condition)) %>%
-    mutate(condition = gsub("IFNalpha.*\\+", "", condition))
-contrast_sumstats_bms <- contrast_sumstats %>% filter(grepl("BMS", condition)) %>%
-    mutate(condition = gsub("IFNalpha.*\\+", "", condition))
-
-contrast_sumstats_bms_thresh <- contrast_sumstats_bms %>%
-    mutate(fdr_05 = if_else(fdr < 0.05, "Significant", "NS"),
-           fdr_01 = if_else(fdr < 0.01, "Significant", "NS"),
-           fdr_001 = if_else(fdr < 0.001, "Significant", "NS"))
-
-sumstats_bms_unnormalized_thresh <- sumstats_bms  %>%
-    mutate(fdr_05 = if_else(fdr < 0.05, "Significant", "NS"),
-           fdr_01 = if_else(fdr < 0.01, "Significant", "NS"),
-           fdr_001 = if_else(fdr < 0.001, "Significant", "NS"))
-
-contrast_sumstats_bms_thresh %>% write_tsv("variant_sets/TYK2-BMS-combined-cleaned-thresholds.contrast.tsv")
-sumstats_bms_unnormalized_thresh %>% write_tsv("variant_sets/TYK2-BMS-combined-cleaned-thresholds.sumstats.tsv")
-
 ```
 
 ### Drug Resistance
 
-```{r bms-drig-resist, fig.width = 15, fig.height = 5}
-ggplot(contrast_sumstats_bms) +
+```{r bms-drig-resist-1, fig.width = 15, fig.height = 5}
+bms_resist_all <- contrast_sumstats %>%
+    filter(grepl("BMS", condition)) %>%
+    mutate(assay = factor(assay, levels = c("assay1", "assay2", "assay3")))
+
+ggplot(bms_resist_all) +
     geom_hline(yintercept = -log10(0.01), color = "red") +
     geom_point(aes(x = log2Contrast,
                    y = -log10(fdr_contrast),
@@ -45,7 +30,29 @@ ggplot(contrast_sumstats_bms) +
     xlab("Log2 Fold Change") + ylab("-log10(FDR)") +
     scale_color_identity() +
     ggtitle("IFN-alpha + BMS-986202, Normalized to Untreated") +
-    facet_wrap(~condition+assay, nrow = 1)
+    facet_wrap(~assay + condition, nrow = 1)
+```
+
+```{r bms-drig-resist-2, fig.width = 8, fig.height = 8}
+bms_resist <- contrast_sumstats %>%
+    filter(assay == "assay1",
+           condition == "IFNalpha100+BMS-986202_100")
+
+ggplot(bms_resist) +
+    geom_hline(yintercept = -log10(0.01), color = "red") +
+    geom_point(aes(x = log2Contrast,
+                   y = -log10(fdr_contrast),
+                   color = if_else(fdr_contrast < 0.01, "red", "black")),
+               size = 2) +
+    geom_label_repel(data = bms_resist %>% filter(fdr_contrast < 0.01),
+                     aes(x = log2Contrast,
+                         y = -log10(fdr_contrast),
+                         color = if_else(fdr_contrast < 0.01, "red", "black"),
+                         label = str_c(pos, aa)),
+                     size = 2, nudge_x = 1) +
+    xlab("Log2 Fold Change") + ylab("-log10(FDR)") +
+    scale_color_identity() +
+    ggtitle("IFN-alpha + BMS-986202, Normalized to Untreated")
 ```
 
 ### Binding Site (GoF) Comparisons
@@ -103,51 +110,3 @@ sumstats_potentiate <- contrast_sumstats %>%
 sig_vars_potentiate <- sumstats_potentiate %>% filter(`FDR < 0.01` != "Neither") %>% pull(pos) %>% unique()
 prepped_data_potentiate <- sumstats_potentiate %>% filter(pos %in% sig_vars_potentiate)
 ```
-
-Chemical footprint grid plots
-```{r}
-
-```
-
-### Thresholding
-
-```{r}
-contrast_sumstats_bms_thresh %>%
-    filter(assay == "assay3") %>%
-    filter(fdr_05 != "NS") %>%
-    select(pos, aa) %>%
-    write_tsv("variant_sets/TYK2-BMS-Inhibitor-Normalized-FDR05.tsv")
-
-contrast_sumstats_bms_thresh %>%
-    filter(assay == "assay3") %>%
-    filter(fdr_01 != "NS") %>%
-    select(pos, aa) %>%
-    write_tsv("variant_sets/TYK2-BMS-Inhibitor-Normalized-FDR01.tsv")
-
-contrast_sumstats_bms_thresh %>%
-    filter(assay == "assay3") %>%
-   
-   filter(fdr_001 != "NS") %>%
-    select(pos, aa) %>%
-    write_tsv("variant_sets/TYK2-BMS-Inhibitor-Normalized-FDR001.tsv")
-
-sumstats_bms_unnormalized_thresh %>%
-    filter(assay == "assay3") %>%
-    filter(fdr_05 != "NS") %>%
-    select(pos, aa) %>%
-    write_tsv("variant_sets/TYK2-BMS-Inhibitor-Unnormalized-FDR05.tsv")
-
-sumstats_bms_unnormalized_thresh %>%
-    filter(assay == "assay3") %>%
-    filter(fdr_01 != "NS") %>%
-    select(pos, aa) %>%
-    write_tsv("variant_sets/TYK2-BMS-Inhibitor-Unnormalized-FDR01.tsv")
-
-sumstats_bms_unnormalized_thresh %>%
-    filter(assay == "assay3") %>%
-    filter(fdr_001 != "NS") %>%
-    select(pos, aa) %>%
-    write_tsv("variant_sets/TYK2-BMS-Inhibitor-Unnormalized-FDR001.tsv")
-```
-
-

@@ -3,8 +3,6 @@ knitr::opts_chunk$set(
   fig.path = "./fig-2/"
 )
 
-library(tidyverse)
-
 ifna_signaling <- read_tsv("../sumstats/TYK2-run3.sumstats.tsv", show_col_types = FALSE) %>%
     filter(condition == "IFNalpha100_0") %>%
     mutate(p.adj_dms = p.adjust(p.value, method = "BH")) %>%

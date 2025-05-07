@@ -7,8 +7,6 @@ knitr::opts_chunk$set(
   dev = c("png", "pdf")
 )
 
-source("../src/dms-analysis-utils.R")
-
 aa_order <- c("Stop", "P", "G", "A", "M", "V", "L", "I", "T", "S",
               "C", "Q", "N", "Y", "W", "F", "E", "D", "K", "H", "R")
 

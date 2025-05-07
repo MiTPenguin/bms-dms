@@ -15,9 +15,6 @@ output: github_document
 
 
 
-```
-## Error in file(filename, "r", encoding = encoding): cannot open the connection
-```
 
 ### Main Heatmaps
 

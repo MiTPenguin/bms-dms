@@ -11,6 +11,31 @@ library(emmeans)
 library(future.callr)
 library(tidyverse)
 
+generate_resamples <- function(mean_vec, se_vec, metadata, num){
+    
+    df <- MASS::mvrnorm(n = num,
+                  mu = mean_vec,
+                  Sigma = diag(se_vec^2)) %>%
+        as_tibble() %>%
+        mutate(n = row_number()) %>%
+        rename(c("0.125" = "V1", "0.375" = "V2", "0.625" = "V3", "0.875" = "V4")) %>%
+        pivot_longer(names_to = "bin", values_to = "value", `0.125`:`0.875`)
+
+    df_score <- df %>%
+        group_by(n) %>% 
+        mutate(bin = as.numeric(bin),
+               value = (value - min(value)) / sum(value - min(value))) %>%
+        summarize(score = sum(bin*value)) 
+    
+    return(bind_cols(tibble(
+        "score_mean" = mean(df_score$score),
+        "score_se" = sd(df_score$score)),
+        "chunk" = metadata[1],
+        "pos" = metadata[2],
+        "aa" = metadata[3]))
+
+}
+
 select_complete_mutants <- function(df, cvar) {
 
     expected_conditions <- df %>%
@@ -43,12 +68,8 @@ generate_formula <- function(keyword = "global") {
 
     if (keyword == "global") {
         formula <- as.formula(count ~ -1 + condition + condition:mut_aa + (1 | barcode) + offset(stop_counts))
-    } else if (keyword == "interaction") {
-        formula <- as.formula(count ~ -1 + condition + mut_aa + condition:mut_aa + (1 | barcode) + offset(stop_counts))
     } else if (keyword == "flow") {
         formula <- as.formula(count ~ -1 + condition_conc + condition_conc:mut_aa + (1 | barcode))
-    } else if (keyword == "drc") {
-        formula <- as.formula(count ~ -1 + condition + condition:mut_aa + (1 | condition:barcode) + offset(stop_counts))
     } else {
         stop("Invalid model type")
     }
@@ -56,19 +77,6 @@ generate_formula <- function(keyword = "global") {
 }
 
 rand_effect <- function(data, mod_path, formula) {
-
-    # Model fitting parameters:
-    ## L-BFGS-B is a particularly memory efficient quasi-Newton method
-
-    ## start is the starting value for the model, and given the log link
-    ### this value closely matches the end of the optimization
-    ### for most positions and seemed to make sense
-
-    ## rel.tol is the relative tolerance for convergence
-    ## pgtol is the tolerance for the projected gradient
-    ### Both of these are reduced to ensure the model converges, and
-    ### decreasing them did not obviously alter model fit, though
-    ### a formal grid search was not performed
 
     to_return <- tryCatch({
 
@@ -151,5 +159,6 @@ rand_effect_wrap <- function(mapped_counts, form, nestvars, model_output_path, d
         select(all_of(nestvars), pos, sumstats) %>%
         unnest_wider(sumstats)
 
-  return(sumstats_wide)
+    return(sumstats_wide)
+
 }

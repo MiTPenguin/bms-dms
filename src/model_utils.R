@@ -162,3 +162,22 @@ rand_effect_wrap <- function(mapped_counts, form, nestvars, model_output_path, d
     return(sumstats_wide)
 
 }
+
+compute_difference <- function(test, control, sumstats) {
+    
+    df1 <- sumstats %>% filter(condition == test) %>% dplyr::select(-condition)
+    df2 <- sumstats %>% filter(condition == control) %>% dplyr::select(-condition)
+    
+    df <- inner_join(df1, df2,
+                     by = c("chunk", "pos", "aa"))
+    
+    new_stats <- df %>%
+        mutate(log2FoldChange = log2FoldChange.x - log2FoldChange.y,
+               log2StdError = sqrt(log2StdError.x^2 + log2StdError.y^2)) %>%
+        dplyr::select(chunk, pos, aa, log2FoldChange, log2StdError) %>%
+        ungroup()
+    
+    new_stats$condition = paste0(test, " - ", control)
+    
+    return(new_stats)
+}

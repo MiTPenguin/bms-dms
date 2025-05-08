@@ -1,7 +1,7 @@
 ---
 title: "Octant-BMS TYK2 Manuscript Data Visuals"
 author: "Nathan Abell and Conor Howard"
-date: 'May 07, 2025'
+date: 'May 08, 2025'
 output: github_document
 ---
 
@@ -52,3 +52,39 @@ output: github_document
 
 
 
+```
+## Error in `mutate()`:
+## ! Can't transform a data frame with `NA` or `""` names.
+```
+
+```
+## Error: object 'plot_data' not found
+```
+
+```
+## Error: object 'positions' not found
+```
+
+```
+## Error: object 'plot_data' not found
+```
+
+```
+## Error: object 'plot_data' not found
+```
+
+```
+## Error: object 'plot_data' not found
+```
+
+```
+## Error: object 'plot_white' not found
+```
+
+```
+## Error: object 'plot_gray' not found
+```
+
+```
+## Error: object 'plot_all_gray' not found
+```

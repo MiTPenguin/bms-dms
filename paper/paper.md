@@ -43,48 +43,12 @@ output: github_document
 
 ### Drug Resistance
 
-![plot of chunk bms-drig-resist-1](./fig-3/bms-drig-resist-1-1.png)
+![plot of chunk bms-drug-resist-1](./fig-3/bms-drug-resist-1-1.png)
 
-![plot of chunk bms-drig-resist-2](./fig-3/bms-drig-resist-2-1.png)
+![plot of chunk bms-drug-resist-2](./fig-3/bms-drug-resist-2-1.png)
 
 ### Chemical Footprints
 
+![plot of chunk fig-3-resist](./fig-3/fig-3-resist-1.png)
 
-
-
-```
-## Error in `mutate()`:
-## ! Can't transform a data frame with `NA` or `""` names.
-```
-
-```
-## Error: object 'plot_data' not found
-```
-
-```
-## Error: object 'positions' not found
-```
-
-```
-## Error: object 'plot_data' not found
-```
-
-```
-## Error: object 'plot_data' not found
-```
-
-```
-## Error: object 'plot_data' not found
-```
-
-```
-## Error: object 'plot_white' not found
-```
-
-```
-## Error: object 'plot_gray' not found
-```
-
-```
-## Error: object 'plot_all_gray' not found
-```
+![plot of chunk fig-3-potentiate](./fig-3/fig-3-potentiate-1.png)

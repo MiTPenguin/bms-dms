@@ -13,7 +13,7 @@ aa_order <- c("G","A","P","K","H",
               "D","M","V","I","L",
               "Y","W","F","Q","N")
 
-source("src/model_utils.R")
+source("../src/model_utils.R")
 ```
 
 ### Drug Resistance
@@ -59,7 +59,7 @@ ggplot(bms_resist) +
 
 ### Chemical Footprints
 
-```{r fig-3-resist, fig.width = 10, fig.height = 8}
+```{r fig-3-resist, fig.width = 13, fig.height = 8}
 sumstats_resist <- contrast_sumstats %>%
     filter(assay == "assay2",
            condition %in% c("IFNalpha+Zasocitinib_1e-06", "IFNalpha+BMS-986202_1e-06"),
@@ -101,12 +101,11 @@ prepped_data_resist %>%
                       fill = `FDR < 0.01`), color = "black") +
         scale_fill_manual(values = colors) +
         xlab("Position") + ylab("") +
-        theme_pubr() +
         facet_grid(scale = "free_x",
                    space = "free")
 ```
 
-```{r fig-3-potentiate, fig.width = 10, fig.height = 8}
+```{r fig-3-potentiate, fig.width = 13, fig.height = 8}
 sumstats_potentiate <- read_tsv("../sumstats/TYK2-run3.sumstats.tsv", show_col_types = FALSE)
 bms_poten <- compute_difference(test = "IFNalpha100+BMS-986202_2e-08",
                                 control = "IFNalpha100_0",
@@ -156,7 +155,6 @@ prepped_data_potentiate %>%
                       fill = `FDR < 0.01`), color = "black") +
         scale_fill_manual(values = colors) +
         xlab("Position") + ylab("") +
-        theme_pubr() +
         facet_grid(scale = "free_x",
                    space = "free")
 ```

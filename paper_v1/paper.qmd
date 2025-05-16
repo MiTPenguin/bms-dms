@@ -17,6 +17,7 @@ knitr:
 library(scico)
 library(scales)
 library(ggrepel)
+library(ggpubr)
 library(ggbeeswarm)
 library(janitor)
 library(broom)
@@ -25,7 +26,7 @@ library(patchwork)
 library(stringr)
 library(tidyverse)
 
-custom_theme <- theme_bw(
+custom_theme <- theme_pubr(
   base_size = 15
 ) +
   theme(
@@ -105,3 +106,11 @@ write_tsv(contrast_sumstats, "../sumstats/TYK2.contrast.tsv")
 # Figure 3
 
 {{< include fig-3.qmd >}} 
+
+# Supplementary Figure 2
+
+{{< include fig-2-supplement.qmd >}} 
+
+# Supplementary Figure 3
+
+{{< include fig-3-supplement.qmd >}} 

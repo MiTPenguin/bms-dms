@@ -31,7 +31,6 @@ stability <- read_tsv("../sumstats/TYK2-vamp2.midpoints.tsv", show_col_types = F
 ```
 
 ### Main Heatmaps
-
 ```{r}
 #| label: main-heatmap-activity
 #| echo: false

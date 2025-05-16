@@ -3,3 +3,5 @@ pipeline
 *fastq*
 *bcmap*
 *.mapped-counts.tsv
+
+/.quarto/

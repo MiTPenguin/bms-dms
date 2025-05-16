@@ -1,6 +1,21 @@
-```{r fig-2-setup}
+---
+title: "TYK2 Analysis - Figure 2"
+format: gfm
+code-fold: true
+knitr:
+  opts_chunk:
+    fig.align: "center"
+---
+
+```{r}
+#| label: fig-2-setup
+#| echo: false
+#| warning: false
+#| message: false
+
 knitr::opts_chunk$set(
-  fig.path = "./fig-2/"
+  fig.path = "./fig-2/",
+  dev = c("png", "pdf")
 )
 
 ifna_signaling <- read_tsv("../sumstats/TYK2-run3.sumstats.tsv", show_col_types = FALSE) %>%
@@ -21,7 +36,14 @@ signal_stab <- inner_join(ifna_signaling,
 
 ### IFN-alpha Signaling vs Stability
 
-```{r signal-vs-stability, fig.width = 8, fig.height = 5}
+```{r}
+#| label: signal-vs-stability
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
+
 ggplot(signal_stab) +
   geom_point(aes(x = log2FoldChange,
                  y = midpoint_shift,
@@ -33,10 +55,15 @@ ggplot(signal_stab) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
   scale_alpha_identity()
-
 ```
 
-```{r signal-only-hist, fig.width = 3, fig.height = 10}
+```{r}
+#| label: signal-only-hist
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 3
+#| fig-height: 10
 
 pos_counts <- signal_stab %>%
   group_by(pos) %>%
@@ -49,6 +76,4 @@ ggplot(pos_counts) +
   scale_x_reverse() +
   xlab("TYK2 Position") +
   ylab("Number of\nSignaling-Only\nLOF Variants")
-
-```
-
+``` 

@@ -1,6 +1,24 @@
-```{r fig-3-setup}
+---
+title: "TYK2 Analysis - Figure 3"
+format: 
+  html:
+    fig-width: 15
+    fig-height: 8
+    fig-format: "png"
+  pdf:
+    fig-width: 15
+    fig-height: 8
+---
+
+```{r}
+#| label: fig-3-setup
+#| echo: false
+#| warning: false
+#| message: false
+
 knitr::opts_chunk$set(
-  fig.path = "./fig-3/"
+  fig.path = "./fig-3/",
+  dev = c("png", "pdf")
 )
 
 colors <- c("Neither" = "gray",
@@ -18,7 +36,14 @@ source("../src/model_utils.R")
 
 ### Drug Resistance
 
-```{r bms-drug-resist-1, fig.width = 15, fig.height = 5}
+```{r}
+#| label: bms-drug-resist-1
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 15
+#| fig-height: 5
+
 bms_resist_all <- contrast_sumstats %>%
     filter(grepl("BMS", condition)) %>%
     mutate(assay = factor(assay, levels = c("assay1", "assay2", "assay3")))
@@ -35,7 +60,14 @@ ggplot(bms_resist_all) +
     facet_wrap(~assay + condition, nrow = 1)
 ```
 
-```{r bms-drug-resist-2, fig.width = 8, fig.height = 8}
+```{r}
+#| label: bms-drug-resist-2
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 8
+
 bms_resist <- contrast_sumstats %>%
     filter(assay == "assay1",
            condition == "IFNalpha100+BMS-986202_100")
@@ -59,7 +91,14 @@ ggplot(bms_resist) +
 
 ### Chemical Footprints
 
-```{r fig-3-resist, fig.width = 13, fig.height = 8}
+```{r}
+#| label: fig-3-resist
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 13
+#| fig-height: 8
+
 sumstats_resist <- contrast_sumstats %>%
     filter(assay == "assay2",
            condition %in% c("IFNalpha+Zasocitinib_1e-06", "IFNalpha+BMS-986202_1e-06"),
@@ -105,7 +144,14 @@ prepped_data_resist %>%
                    space = "free")
 ```
 
-```{r fig-3-potentiate, fig.width = 13, fig.height = 8}
+```{r}
+#| label: fig-3-potentiate
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 13
+#| fig-height: 8
+
 sumstats_potentiate <- read_tsv("../sumstats/TYK2-run3.sumstats.tsv", show_col_types = FALSE)
 bms_poten <- compute_difference(test = "IFNalpha100+BMS-986202_2e-08",
                                 control = "IFNalpha100_0",
@@ -157,4 +203,4 @@ prepped_data_potentiate %>%
         xlab("Position") + ylab("") +
         facet_grid(scale = "free_x",
                    space = "free")
-```
+``` 

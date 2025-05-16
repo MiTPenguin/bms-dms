@@ -1,9 +1,20 @@
-```{r fig-1-setup}
+---
+title: "TYK2 Analysis - Figure 1"
+format: gfm
+code-fold: true
+knitr:
+  opts_chunk:
+    fig.align: "center"
+---
+
+```{r}
+#| label: fig-1-setup
+#| echo: false
+#| warning: false
+#| message: false
+
 knitr::opts_chunk$set(
-  echo = FALSE,
   fig.path = "./fig-1/",
-  warning = FALSE,
-  message = FALSE,
   dev = c("png", "pdf")
 )
 
@@ -21,7 +32,14 @@ stability <- read_tsv("../sumstats/TYK2-vamp2.midpoints.tsv", show_col_types = F
 
 ### Main Heatmaps
 
-```{r main-heatmap-activity, fig.width=8, fig.height=12}
+```{r}
+#| label: main-heatmap-activity
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 12
+
 norm_heat_l2fc <- ifna_signaling %>%
     ggplot() +
         geom_tile(aes(y = pos, x = aa, fill = log2FoldChange)) +
@@ -44,7 +62,14 @@ norm_heat_z <- ifna_signaling %>%
 norm_heat_l2fc + norm_heat_z
 ```
 
-```{r main-heatmap-stability, fig.width=8, fig.height=12}
+```{r}
+#| label: main-heatmap-stability
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 12
+
 norm_heat_l2fc <- stability %>%
     rename("Midpoint Shift" = "midpoint_shift") %>%
     ggplot() +
@@ -66,6 +91,4 @@ norm_heat_z <- stability %>%
         scale_y_reverse()
 
 norm_heat_l2fc + norm_heat_z
-```
-
-
+``` 

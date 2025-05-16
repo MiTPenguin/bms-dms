@@ -1,17 +1,18 @@
 ---
 title: "Octant-BMS TYK2 Manuscript Data Visuals"
 author: "Nathan Abell and Conor Howard"
-date: '`r format(Sys.Date(), "%B %d, %Y")`'
-output: github_document
+format: gfm
+code-fold: true
+knitr:
+  opts_chunk:
+    fig.align: "center"
 ---
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-knitr::opts_chunk$set(
-  echo = FALSE,
-  warning = FALSE,
-  message = FALSE,
-  dev = c("png", "pdf")
-)
+```{r}
+#| label: setup
+#| echo: false
+#| warning: false
+#| message: false
 
 library(scico)
 library(scales)
@@ -53,7 +54,11 @@ scale_fill_scico_mid <- function(..., mid = 0, alpha = NULL, begin = 0, end = 1,
 
 # Common Data Processing
 
-```{r loading}
+```{r}
+#| label: loading
+#| echo: false
+#| warning: false
+#| message: false
 
 assay1 <- read_tsv("../sumstats/TYK2-run1.sumstats.tsv", show_col_types = FALSE) %>%
   mutate(assay = "assay1")
@@ -91,15 +96,12 @@ write_tsv(contrast_sumstats, "../sumstats/TYK2.contrast.tsv")
 
 # Figure 1
 
-```{r child="fig-1.Rmd"}
-```
+{{< include fig-1.qmd >}}
 
 # Figure 2
 
-```{r child="fig-2.Rmd"}
-```
+{{< include fig-2.qmd >}}
 
 # Figure 3
 
-```{r child="fig-3.Rmd"}
-```
+{{< include fig-3.qmd >}} 

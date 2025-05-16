@@ -1,13 +1,10 @@
 ---
 title: "TYK2 Analysis - Figure 3"
-format: 
-  html:
-    fig-width: 15
-    fig-height: 8
-    fig-format: "png"
-  pdf:
-    fig-width: 15
-    fig-height: 8
+format: gfm
+code-fold: true
+knitr:
+  opts_chunk:
+    fig.align: "center"
 ---
 
 ```{r}

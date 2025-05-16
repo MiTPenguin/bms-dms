@@ -77,6 +77,23 @@ pacman::p_load(
   scico,
   tidyverse
 )
+
+scale_fill_scico_mid <- function(..., mid = 0, alpha = NULL, begin = 0, end = 1, direction = 1, reverse = TRUE, palette = "broc") {
+  force(mid)
+  ggplot2::continuous_scale(
+    aesthetics = "fill",
+    scale_name = "gradient2",
+    palette = scales::gradient_n_pal(
+      colours = scico::scico(256, alpha, begin, end, direction, palette),
+      values = NULL, space = "Lab"
+    ),
+    guide = "colourbar",
+    rescaler = function(x, to = c(0, 1), from = range(x, na.rm = TRUE)) {
+      scales::rescale_mid(x, to, from, mid)
+    },
+    ...
+  )
+}
 ```
 
 </details>
@@ -93,10 +110,6 @@ aa_order <- c(
   "*", "P", "G", "A", "M", "V", "L", "I", "T", "S",
   "C", "Q", "N", "Y", "W", "F", "E", "D", "K", "H", "R"
 )
-
-setwd("~/Analyses/bms-dms/paper")
-
-source("../../dms/src/model/dms-analysis-utils.R")
 ```
 
 </details>
@@ -192,7 +205,7 @@ and 100 U/mL IFNa from run7
 
 ``` r
 # load IFNa sumstats
-ifna_sumstats_run3 <- read_tsv("sumstats/TYK2-run3-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
+ifna_sumstats_run3 <- read_tsv("../sumstats/archive/TYK2-run3-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
   # dplyr::filter(condition == "IFNalpha100_0") %>%
   mutate(
     aa = if_else(aa %in% c("X", "Stop", "*"), "*", aa),
@@ -232,15 +245,43 @@ ifna_run3 <- map(
   mutate(run = "run3")
 
 # load run7 IFN100 data
-ifna_run7 <- read_tsv("sumstats/TYK2-run7-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>% 
-  dplyr::filter(condition == "IFNalpha100_0") %>%
-  mutate(condition = "IFNalpha_100 - None_0") %>% 
+ifna_sumstats_run7 <- read_tsv("../sumstats/archive/TYK2-run7-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
+  # dplyr::filter(condition == "IFNalpha100_0") %>%
   mutate(
     aa = if_else(aa %in% c("X", "Stop", "*"), "*", aa),
     aa = factor(aa, levels = aa_order)
+  )
+
+# compute contrasts for IFNa data
+conditions <- unique(ifna_sumstats_run7$condition)
+noneIdx <- which(conditions == "None_0")
+
+ifna_run7 <- map(
+  conditions[-noneIdx],
+  ~ compute_difference(
+    test = .,
+    control = "None_0",
+    sumstats = ifna_sumstats_run7
+  )
+) %>%
+  list_rbind() %>%
+  mutate(condition = factor(condition,
+    levels = c(
+      "IFNalpha100_0 - None_0",
+      "IFNalpha100+BMS-986202_2e-08 - None_0",
+      "IFNalpha100+Ropsacitinib_1e-05 - None_0",
+      "IFNalpha100+Zasocitinib_7e-09 - None_0"
+    )
+  )) %>%
+  dplyr::filter(condition == "IFNalpha_100 - None_0") %>%
+  mutate(
+    z_statistic = log2FoldChange / log2StdError,
+    p.value = pmin(
+      pnorm(z_statistic, mean = 0, sd = 1) * 2,
+      (1 - pnorm(z_statistic, sd = 1)) * 2
+    )
   ) %>%
-  mutate(run = "run7") %>%
-  rename(z_statistic = statistic)
+  mutate(run = "run7")
 
 # merge experiments
 ifna_merge <- bind_rows(ifna_run3, ifna_run7) %>%
@@ -257,7 +298,7 @@ ifna_merge <- bind_rows(ifna_run3, ifna_run7) %>%
     p.adj = p.adjust(p.value, method = "BH")
   )
 
-stability <- read_tsv("sumstats/TYK2-FLOW-flow-cleaned.midpoints.tsv", show_col_types = FALSE) %>%
+stability <- read_tsv("../sumstats/archive/TYK2-FLOW-flow-cleaned.midpoints.tsv", show_col_types = FALSE) %>%
   mutate(
     aa = if_else(aa %in% c("X", "Stop", "*"), "*", aa),
     aa = factor(aa, levels = aa_order)
@@ -428,11 +469,11 @@ S1x1
 ```
 
 </details>
+
 <div id="fig-S1x1">
 
 <img src="./fig-1/fig-S1x1-1.png" id="fig-S1x1"
 data-fig-align="center" />
-
 
 Figure 1
 
@@ -854,11 +895,11 @@ A + free(B, type = "label") + free(C, side = "l") + free(D) + E +
 ```
 
 </details>
+
 <div id="fig-S1x2-merged">
 
 <img src="./fig-1/fig-S1x2-merged-1.png" id="fig-S1x2-merged"
 data-fig-align="center" />
-
 
 Figure 2
 

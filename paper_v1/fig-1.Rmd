@@ -7,16 +7,18 @@ knitr::opts_chunk$set(
   dev = c("png", "pdf")
 )
 
-aa_order <- c("Stop", "P", "G", "A", "M", "V", "L", "I", "T", "S",
-              "C", "Q", "N", "Y", "W", "F", "E", "D", "K", "H", "R")
+aa_order <- c("*", "P", "G", "A", "M",
+    "V", "L", "I", "T", "S",
+    "C", "Q", "N", "Y", "W",
+    "F", "E", "D", "K", "H", "R")
 
-ifna_signaling <- read_tsv("../sumstats/TYK2-run3.sumstats.tsv", show_col_types = FALSE) %>%
+ifna_signaling <- assay1 %>%
     filter(condition == "IFNalpha100_0") %>%
     mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "Stop", aa),
            aa = factor(aa, levels = aa_order))
-stability <- read_tsv("../sumstats/TYK2-vamp2.midpoints.tsv", show_col_types = FALSE) %>%
-    mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "Stop", aa),
-           aa = factor(aa, levels = aa_order))
+
+stability <- flow_data %>%
+    mutate(aa = factor(aa, levels = aa_order))
 ```
 
 ### Main Heatmaps

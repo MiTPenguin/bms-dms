@@ -3,11 +3,12 @@ knitr::opts_chunk$set(
   fig.path = "./fig-2/"
 )
 
-ifna_signaling <- read_tsv("../sumstats/TYK2-run3.sumstats.tsv", show_col_types = FALSE) %>%
+ifna_signaling <- assay1 %>%
     filter(condition == "IFNalpha100_0") %>%
     mutate(p.adj_dms = p.adjust(p.value, method = "BH")) %>%
     rename("DMS Statistic" = "statistic")
-stability <- read_tsv("../sumstats/TYK2-vamp2.midpoints.tsv", show_col_types = FALSE)  %>%
+
+stability <- flow_data %>%
     rename("p.adj_flow" = "p.adj",
            "FlowDMS Statistic" = "statistic")
 

@@ -1,7 +1,7 @@
 ---
 title: "Octant-BMS TYK2 Manuscript Data Visuals"
 author: "Nathan Abell and Conor Howard"
-date: 'May 08, 2025'
+date: 'May 16, 2025'
 output: github_document
 ---
 
@@ -52,3 +52,10 @@ output: github_document
 ![plot of chunk fig-3-resist](./fig-3/fig-3-resist-1.png)
 
 ![plot of chunk fig-3-potentiate](./fig-3/fig-3-potentiate-1.png)
+
+# Supplementary Figure 2
+
+
+
+
+![plot of chunk supp-fig-2](./fig-s2/supp-fig-2-1.png)

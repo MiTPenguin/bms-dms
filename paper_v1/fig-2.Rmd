@@ -50,6 +50,5 @@ ggplot(pos_counts) +
   scale_x_reverse() +
   xlab("TYK2 Position") +
   ylab("Number of\nSignaling-Only\nLOF Variants")
-
 ```
 

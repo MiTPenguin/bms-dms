@@ -1,10 +1,6 @@
 ```{r fig-1-setup}
 knitr::opts_chunk$set(
-  echo = FALSE,
-  fig.path = "./fig-1/",
-  warning = FALSE,
-  message = FALSE,
-  dev = c("png", "pdf")
+  fig.path = "./fig-1/"
 )
 
 aa_order <- c("*", "P", "G", "A", "M",

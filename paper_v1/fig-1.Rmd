@@ -1,0 +1,70 @@
+```{r fig-1-setup}
+knitr::opts_chunk$set(
+  fig.path = "./fig-1/"
+)
+
+aa_order <- c("*", "P", "G", "A", "M",
+    "V", "L", "I", "T", "S",
+    "C", "Q", "N", "Y", "W",
+    "F", "E", "D", "K", "H", "R")
+
+ifna_signaling <- assay1 %>%
+    filter(condition == "IFNalpha_100") %>%
+    mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "*", aa),
+           aa = factor(aa, levels = aa_order))
+
+stability <- flow_data %>%
+    mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "*", aa),
+           aa = factor(aa, levels = aa_order))
+```
+
+### Main Heatmaps
+
+```{r main-heatmap-activity, fig.width=8, fig.height=12}
+norm_heat_l2fc <- ifna_signaling %>%
+    ggplot() +
+        geom_tile(aes(y = pos, x = aa, fill = log2FoldChange)) +
+        scale_fill_scico_mid(limits = c(-3,1), palette = "vik", mid = 0, oob = squish) +
+        xlab("") + ylab("TYK2 Amino Acid Position") +
+        ggtitle("TYK2 // Assay 3 // IFN-alpha 100 U/mL") +
+        scale_y_reverse() +
+        theme_bw(base_size = 8)
+
+norm_heat_z <- ifna_signaling %>%
+    rename("Z-Statistic" = "statistic") %>%
+    ggplot() +
+        geom_tile(aes(y = pos, x = aa, fill = `Z-Statistic`)) +
+        scale_fill_scico_mid( limits = c(-10,2.5), palette = "vik", mid = 0, oob = squish) +
+        xlab("") + ylab("TYK2 Amino Acid Position") +
+        ggtitle("TYK2 // Assay 3 // IFN-alpha 100 U/mL") +
+        scale_y_reverse() +
+        theme_bw(base_size = 8)
+
+norm_heat_l2fc + norm_heat_z
+```
+
+```{r main-heatmap-stability, fig.width=8, fig.height=12}
+norm_heat_l2fc <- stability %>%
+    rename("Midpoint Shift" = "midpoint_shift") %>%
+    ggplot() +
+        geom_tile(aes(y = pos, x = aa, fill = `Midpoint Shift`)) +
+        scale_fill_scico_mid(limits = c(-0.75, 0.25), palette = "vik", mid = 0, oob = squish) +
+        xlab("") + ylab("TYK2 Amino Acid Position") +
+        ggtitle("TYK2 // FlowDMS") +
+        theme_bw(base_size = 8) +
+        scale_y_reverse()
+
+norm_heat_z <- stability %>%
+    rename("Z-Statistic" = "statistic") %>%
+    ggplot() +
+        geom_tile(aes(y = pos, x = aa, fill = `Z-Statistic`)) +
+        scale_fill_scico_mid( limits = c(-10,2.5), palette = "vik", mid = 0, oob = squish) +
+        xlab("") + ylab("TYK2 Amino Acid Position") +
+        ggtitle("TYK2 // FlowDMS") +
+        theme_bw(base_size = 8) +
+        scale_y_reverse()
+
+norm_heat_l2fc + norm_heat_z
+```
+
+

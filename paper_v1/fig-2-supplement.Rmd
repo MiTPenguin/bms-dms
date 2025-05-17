@@ -1,6 +1,6 @@
 ```{r fig-2-supplement-setup}
 knitr::opts_chunk$set(
-  fig.path = "./fig-s2/"
+  fig.path = "./fig-2-supplement/"
 )
 
 cbPalette <- c("#DC5E65", "#E69F00", "#56B4E9",

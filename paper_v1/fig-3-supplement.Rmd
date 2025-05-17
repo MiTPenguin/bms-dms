@@ -1,9 +1,12 @@
 ```{r fig-3-supplement-setup}
 knitr::opts_chunk$set(
-  fig.path = "./fig-s3/"
+  fig.path = "./fig-3-supplement/"
 )
 
 library(ggh4x)
+library(ggsignif)
+library(ggrastr)
+library(ggpubr)
 
 cbPalette <- c("#DC5E65", "#E69F00", "#56B4E9",
   "#0072B2", "darkgrey", "#009E73", 
@@ -19,12 +22,17 @@ ifna_series <- bind_rows(
   contrast_sumstats %>% filter(condition == "IFNalpha100_0", assay == "assay3") %>% mutate(condition = "IFNa 100 U/mL"),
   contrast_sumstats %>% filter(condition == "IFNalpha_10", assay == "assay1") %>% mutate(condition = "IFNa 10 U/mL"),
   contrast_sumstats %>% filter(condition == "IFNalpha_1", assay == "assay1") %>% mutate(condition = "IFNa 1 U/mL")
-) %>% select(pos, condition, aa, statistic_contrast, fdr_contrast) %>%
-  rename("statistic" = "statistic_contrast", "p.adj" = "fdr_contrast")
+) %>% select(pos, condition, aa, log2Contrast, log2ContrastError, statistic_contrast, fdr_contrast) %>%
+  rename("effect" = "log2Contrast",
+         "error" = "log2ContrastError",
+      "statistic" = "statistic_contrast",
+      "p.adj" = "fdr_contrast")
 
 flow_series <- flow_data %>%
   mutate(condition = "Abundance") %>%
-  select(pos, aa, statistic, p.adj)
+  select(pos, aa, condition, midpoint_shift, midpoint_shift_se, statistic, p.adj) %>%
+    rename("effect" = "midpoint_shift",
+           "error" = "midpoint_shift_se")
 
 fig_data <- bind_rows(ifna_series, flow_series) %>%
   mutate(aa = if_else(aa %in% c("*", "Stop", "X"), "*", aa),
@@ -32,14 +40,44 @@ fig_data <- bind_rows(ifna_series, flow_series) %>%
     condition = factor(condition, levels = c("IFNa 1 U/mL",
       "IFNa 10 U/mL",
       "IFNa 100 U/mL",
-      "Abundance"))) %>%
+      "Abundance")))
 
-tyk2_clinvar <- read_tsv("data/clinvar_TYK2_20250109.tsv", show_col_types = FALSE)  %>%
+tyk2_clinvar <- read_tsv("paper_v1/data/clinvar_TYK2_20250109.tsv", show_col_types = FALSE) %>%
   filter(type == "missense variant") %>%
   mutate(class = if_else(class %in% c("Benign",
     "Benign/Likely benign",
     "Likely benign"),
     "Benign", class))
+
+tyk2_clinvar_joined <- tyk2_clinvar %>%
+  inner_join(fig_data, by = c("pos", "aa"))
+
+am_df <-  read_tsv("data/TYK2.Uniprot.P29597.AlphaMissense_aa.substitutions.tsv",
+  show_col_types = FALSE,
+  col_names = c("uniprot", "variant", "score", "classifier_value")) %>%
+  mutate(aa = str_sub(variant, -1),
+    pos = as.numeric(str_sub(variant, 2, -2)),
+    classifier_value = factor(classifier_value, levels = c("Pathogenic", "Ambiguous", "Benign"))) %>%
+  inner_join(fig_data, by = c("pos", "aa")) %>%
+  filter(condition == "IFNa 100 U/mL" | condition == "Abundance")
+
+spikeins <- read_tsv("data/tyk2-spikeins.tsv", show_col_types = FALSE,
+                     col_names = c("pos", "mut_id", "class")) %>%
+  mutate(class = if_else(class == "-", "Unknown", class),
+    class = factor(class, levels = c("LOF", "Unknown", "GOF")),
+    mut_id = gsub("Stop", "*", mut_id),
+    aa = str_sub(mut_id, -1),
+    pos = as.numeric(str_sub(mut_id, 2, -2))) %>%
+  arrange(class, pos) %>%
+  mutate(aa = ifelse(aa %in% c("*", "Stop", "X"), "*", aa)) 
+
+spikeins$mut_id <- factor(spikeins$mut_id, levels = spikeins$mut_id)
+
+spikeins_join <- spikeins %>%
+  inner_join(fig_data, by = c("pos", "aa")) %>%
+  arrange(class, pos) %>%
+  mutate(class = factor(class, levels = c("GOF", "Unknown", "LOF")),
+    significance = factor(if_else(p.adj < 0.01, "FDR < 1%", "not significant")))
 ```
 
 ### Panel A
@@ -106,7 +144,7 @@ B <- fig_data %>%
     legend.title = element_blank(),
     legend.text = element_text(size = rel(0.5)),
     legend.key.height = unit(0.01, "npc"),
-    strip.text.y = element_blank(),# element_text(angle = 0, size = rel(0.7)),
+    strip.text.y = element_blank(),
     axis.text= element_text(size = unit(6, "points")),
     plot.tag.position = c(0.01, 0.9)
   )
@@ -116,12 +154,10 @@ B
 
 ### Panel C
 ```{r supp-fig-3-C, fig.width=8, fig.height=8}
-am_df <-  read_tsv("data/TYK2.Uniprot.P29597.AlphaMissense_aa.substitutions.tsv",
-  show_col_types = FALSE,
-  col_names = c("uniprot", "variant", "score", "classifier_value"))
+class_colors <- c("Pathogenic" = "#DC5E65", "Ambiguous" =  "#E69F00", "Benign" =  "#0072B2")
 
 C <- am_df %>%
-  ggplot(aes(x = classifier_value, y = z_statistic,
+  ggplot(aes(x = classifier_value, y = statistic,
              color = classifier_value)) +
   geom_quasirandom_rast(size = 0.5,
                         show.legend = FALSE) +
@@ -129,16 +165,8 @@ C <- am_df %>%
                col = "black",
                outliers = FALSE,
                width = 0.09) +
-  scale_color_manual(values = c(
-    "Pathogenic" = "#DC5E65",
-      "Ambiguous" =  "#E69F00",
-      "Benign" =  "#0072B2")
-  ) +
-    scale_fill_manual(values = c(
-    "Pathogenic" = "#DC5E65",
-      "Ambiguous" =  "#E69F00",
-      "Benign" =  "#0072B2")
-  ) +
+  scale_color_manual(values = class_colors) +
+  scale_fill_manual(values = class_colors) +
   # add significance calculation using KS test
   geom_signif(
     color = "black",
@@ -161,15 +189,10 @@ C <- am_df %>%
     size = 0.5,
     textsize = 3
   ) +
-  facet_grid2(. ~ facet_label,
-              scales = "free_y",
-              space = "free") +
-  labs(
-    x = "AlphaMissense annotation",
-    y = "Z statistic",
-  ) +
+  facet_grid2(. ~ condition, scales = "free_y", space = "free") +
+  labs(x = "AlphaMissense annotation", y = "Z statistic") +
   ylim(-15,7) +
-  theme_pub(base_size = 11) +
+  custom_theme +
   theme(
     plot.title = element_blank(),
     axis.text.x = element_text(size = rel(0.8)),
@@ -177,7 +200,152 @@ C <- am_df %>%
     axis.title = element_text(size = rel(0.6)),
     strip.text.x = element_text(size = rel(0.7)),
     plot.tag.position = c(0.01, 0.98)
-    )
+  )
 
 C
+```
+
+### Panel D
+
+```{r supp-fig-3-D, fig.width=12, fig.height=6}
+D1 <- spikeins_join %>% 
+  filter(condition != "Abundance") %>% 
+  mutate(condition = gsub("IFNa", "IFNa\n", condition)) %>%
+  ggplot() +
+  geom_vline(xintercept = 0) +
+  geom_hline(yintercept = 26.5,
+    color = "#DC5E65",
+    linetype = "dashed") +
+  geom_hline(yintercept = 15.5,
+    color = "#0072B2",
+    linetype = "dashed") +
+  geom_pointrange(
+    aes(
+      x = effect,
+      y = factor(mut_id),
+      xmin = effect - 2 * error,
+      xmax = effect + 2 * error,
+      color = significance
+    ),
+    linewidth = 0.25,
+    size = 0.1
+  ) +
+  theme_pubr(base_size = 13) +
+  labs(
+    x = expression(Log[2]~fold~change~"\u00B1"~2~standard~errors),
+    y = "") +
+  scale_color_manual("", values = c("black", "lightgrey")) +
+  xlim(c(-2.5, 1)) +
+  custom_theme +
+  theme(
+    panel.grid.major.x = element_blank(),
+    strip.text.x = element_text(size = unit(6, "points")),
+    axis.title = element_text(size = rel(0.6)),
+    legend.position = "top",
+    legend.margin=margin(0,0,-10,0),
+    axis.text.y = element_text(size = unit(6, "points")),
+    axis.text.x = element_text(angle = 0, hjust = 0.6,
+                               size = unit(6, "points")),
+    panel.grid.major.y = element_blank(),
+    plot.tag.position = c(0.01, 0.98)
+  ) +
+  facet_grid2(. ~ condition, scales = "fixed")
+
+D2 <- spikeins_join %>% 
+  filter(condition == "Abundance") %>% 
+  ggplot() +
+  geom_vline(xintercept = 0) +
+  geom_hline(yintercept = 26.5,
+    color = "#DC5E65",
+    linetype = "dashed") +
+  geom_hline(yintercept = 15.5,
+    color = "#0072B2",
+    linetype = "dashed") +
+  geom_pointrange(
+    aes(
+      x = effect,
+      y = mut_id,
+      xmin = effect - 2 * error,
+      xmax = effect + 2 * error,
+      color = significance
+    ),
+    linewidth = 0.25,
+    size = 0.1,
+    show.legend = FALSE
+  ) +
+  theme_pubr(base_size = 13) +
+  labs(
+    x = "Midpoint shift\n± 2 standard errors",
+    y = "") +
+  scale_color_manual("", values = c("black", "lightgrey")) +
+  scale_x_continuous(limits = c(-1,1),
+                     breaks = c(-1,0,1)) +
+  custom_theme +
+  theme(
+    panel.grid.major.x = element_blank(),
+    strip.text.x = element_text(size = unit(6, "points")),
+    axis.title = element_text(size = rel(0.6)),
+    axis.text.y = element_blank(),
+    plot.margin = margin(0,0,0,10),
+    axis.ticks.y = element_blank(),
+    axis.text.x = element_text(angle = 0, hjust = 0.6,
+                               size = unit(6, "points")),
+    panel.grid.major.y = element_blank(),
+    plot.tag.position = c(0.01, 0.98)
+  ) +
+  facet_grid2(. ~ condition)
+
+D <- D1 + (D2 + plot_layout(tag_level = "new")) + plot_layout(widths = c(3,1))
+
+D
+```
+
+### Panel E
+```{r supp-fig-3-E, fig.width=8, fig.height=8}
+anno_df <- anno_df %>% 
+  mutate(classifier_value = fct_recode(classifier_value, "Conflicting\nClassifications\nOf Pathogenicity" = "Conflicting Classifications Of Pathogenicity",
+                                       "Uncertain\nSignificance"  = "Uncertain Significance",
+                                       "Benign/\nLikely Benign" = "Benign/Likely Benign"))
+
+counts <- anno_df %>% 
+  dplyr::filter(classifier == "clinvar") %>% 
+  select(mut, classifier_value) %>% 
+  distinct() %>% 
+  group_by(classifier_value) %>% 
+  summarise(count = n())
+
+E <- anno_df %>% 
+  dplyr::filter(classifier == "clinvar") %>% 
+  left_join(counts) %>% 
+  arrange(classifier_value) %>%
+  # mutate(classifier_value_count = paste("count", count)) %>% 
+  mutate(classifier_value_count =  fct_inorder(paste0(classifier_value, " (", format(count, big.mark = ",", trim = TRUE),")"))) %>%
+  ggplot(aes(
+    x = z_statistic,
+    y = classifier_value_count,
+    color = classifier_value_count,
+             fill = classifier_value_count)) +
+  geom_vline(xintercept = 0, color = "lightgrey", width = 0.5) +
+  geom_quasirandom_rast(orientation = "y",
+                   size = 0.5,
+                   width = 0.2,
+                   varwidth = TRUE,
+                   show.legend = FALSE) +
+  scale_color_manual(values = cbPalette) +
+  scale_fill_manual(values = cbPalette) +
+  facet_grid2(. ~ facet_label,
+              scales = "free_x",
+              space = "free") +
+  labs(
+    x = "Z statistic",
+    y = "Clinvar annotation",
+  ) +
+  theme_pub(base_size = 11) + 
+  theme(axis.text.x = element_text(angle = 0, hjust = 0.6),
+        axis.text.y = element_text(angle = 0, hjust = 0.5),
+        axis.text= element_text(size = unit(6, "points")),
+        strip.text.y = element_text(angle = 0, size = unit(8, "points")),
+        axis.title = element_text(size = unit(10, "points")),
+        plot.tag.position = c(0.01, 0.98)
+        )
 ```

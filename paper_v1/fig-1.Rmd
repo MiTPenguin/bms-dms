@@ -9,12 +9,13 @@ aa_order <- c("*", "P", "G", "A", "M",
     "F", "E", "D", "K", "H", "R")
 
 ifna_signaling <- assay1 %>%
-    filter(condition == "IFNalpha100_0") %>%
-    mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "Stop", aa),
+    filter(condition == "IFNalpha_100") %>%
+    mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "*", aa),
            aa = factor(aa, levels = aa_order))
 
 stability <- flow_data %>%
-    mutate(aa = factor(aa, levels = aa_order))
+    mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "*", aa),
+           aa = factor(aa, levels = aa_order))
 ```
 
 ### Main Heatmaps

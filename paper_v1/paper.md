@@ -1,7 +1,7 @@
 ---
 title: "Octant-BMS TYK2 Manuscript Data Visuals"
 author: "Nathan Abell and Conor Howard"
-date: 'May 16, 2025'
+date: 'May 17, 2025'
 output: github_document
 ---
 
@@ -58,33 +58,31 @@ output: github_document
 
 
 
-![plot of chunk supp-fig-2](./fig-s2/supp-fig-2-1.png)
+![plot of chunk supp-fig-2](./fig-2-supplement/supp-fig-2-1.png)
 
 # Supplementary Figure 3
 
 
 
-```
-## Error in bind_rows(ifna_series, flow_series) %>% mutate(aa = if_else(aa %in% : could not find function "%>%<-"
-```
 
 ### Panel A
 
 
-```
-## Error in `mutate()`:
-## i In argument: `status = case_when(...)`.
-## Caused by error in `case_when()`:
-## ! Failed to evaluate the left-hand side of formula 1.
-## Caused by error:
-## ! object 'p.adj' not found
-```
 
-```
-## Error: object 'A' not found
-```
+### Panel B
 
-### Fig S1x2-B - stop effect density plots
 
-![plot of chunk supp-fig-3-B](./fig-s3/supp-fig-3-B-1.png)
 
+### Panel C
+
+
+### Panel D
+
+
+
+### Panel E
+
+
+### Composite
+
+![plot of chunk supp-fig-3](./fig-3-supplement/supp-fig-3-1.png)

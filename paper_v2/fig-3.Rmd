@@ -106,7 +106,7 @@ prepped_data_resist %>%
 ```
 
 ```{r fig-3-potentiate, fig.width = 13, fig.height = 8}
-sumstats_potentiate <- read_tsv("../sumstats/TYK2-run3.sumstats.tsv", show_col_types = FALSE)
+sumstats_potentiate <- assay3
 bms_poten <- compute_difference(test = "IFNalpha100+BMS-986202_2e-08",
                                 control = "IFNalpha100_0",
                                 sumstats_potentiate) 
@@ -116,11 +116,11 @@ zaso_poten <- compute_difference(test = "IFNalpha100+Zasocitinib_7e-09",
                                 sumstats_potentiate) 
 
 sumstats_potentiate <- bind_rows(bms_poten, zaso_poten) %>%
-    filter(aa %in% aa_order) %>%
     mutate(statistic = log2FoldChange / log2StdError,
            p.value = (1 - pnorm(abs(statistic))) * 2,,
            FDR = p.adjust(p.value, method = "BH"),
            drug = gsub("_.*", "", condition)) %>%
+    filter(aa %in% aa_order) %>%
     select(pos, drug, aa, statistic, FDR) %>%
     pivot_wider(names_from = drug, values_from = c(statistic, FDR)) %>%
     mutate("FDR < 0.01" = case_when(`FDR_IFNalpha100+BMS-986202` < 0.01 & `FDR_IFNalpha100+Zasocitinib` > 0.01 ~ "BMS-986202",

@@ -1,0 +1,54 @@
+```{r fig-2-setup}
+knitr::opts_chunk$set(
+  fig.path = "./fig-2/"
+)
+
+ifna_signaling <- assay1 %>%
+    filter(condition == "IFNalpha100_0") %>%
+    mutate(p.adj_dms = p.adjust(p.value, method = "BH")) %>%
+    rename("DMS Statistic" = "statistic")
+
+stability <- flow_data %>%
+    rename("p.adj_flow" = "p.adj",
+           "FlowDMS Statistic" = "statistic")
+
+signal_stab <- inner_join(ifna_signaling,
+                          stability,
+                          by = c("chunk", "pos", "aa")) %>%
+  mutate(class = if_else(log2FoldChange < 0 &
+                         p.adj_dms < 0.05 &
+                         (p.adj_flow > 0.1 | midpoint_shift > 0), "signaling-only LOF", "other"))
+```
+
+### IFN-alpha Signaling vs Stability
+
+```{r signal-vs-stability, fig.width = 8, fig.height = 5}
+ggplot(signal_stab) +
+  geom_point(aes(x = log2FoldChange,
+                 y = midpoint_shift,
+                 color = class,
+                 alpha = if_else(class == "signaling-only LOF", 1, 0.3)), stroke = 0) +
+  xlab("DMS Mutant vs WT Log2 Fold Change") +
+  ylab("FlowDMS Midpoint Shift") +
+  scale_color_manual(values = c("signaling-only LOF" = "lightblue", "other" = "gray")) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  scale_alpha_identity()
+
+```
+
+```{r signal-only-hist, fig.width = 3, fig.height = 10}
+
+pos_counts <- signal_stab %>%
+  group_by(pos) %>%
+  count(class) %>%
+  filter(class == "signaling-only LOF")
+
+ggplot(pos_counts) +
+  geom_bar(aes(x = pos, y = n), stat = "identity") +
+  coord_flip() +
+  scale_x_reverse() +
+  xlab("TYK2 Position") +
+  ylab("Number of\nSignaling-Only\nLOF Variants")
+```
+

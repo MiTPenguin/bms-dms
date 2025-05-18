@@ -3,14 +3,14 @@ knitr::opts_chunk$set(
   fig.path = "./fig-2/"
 )
 
-ifna_signaling <- assay1 %>%
-    filter(condition == "IFNalpha_100") %>%
-    mutate(p.adj_dms = p.adjust(p.value, method = "BH")) %>%
-    rename("DMS Statistic" = "statistic")
+ifna_signaling <- contrast_sumstats %>%
+    filter(condition == "IFNalpha100_0", assay == "assay3") %>%
+    rename("p.adj_dms" = "fdr",
+      "DMS Statistic" = "statistic")
 
 stability <- flow_data %>%
     rename("p.adj_flow" = "p.adj",
-           "FlowDMS Statistic" = "statistic")
+      "FlowDMS Statistic" = "statistic")
 
 signal_stab <- inner_join(ifna_signaling,
                           stability,
@@ -30,7 +30,7 @@ ggplot(signal_stab) +
                  alpha = if_else(class == "signaling-only LOF", 1, 0.3)), stroke = 0) +
   xlab("DMS Mutant vs WT Log2 Fold Change") +
   ylab("FlowDMS Midpoint Shift") +
-  scale_color_manual(values = c("signaling-only LOF" = "lightblue", "other" = "gray")) +
+  scale_color_manual(values = c("signaling-only LOF" = "blue", "other" = "gray")) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
   scale_alpha_identity()
@@ -47,7 +47,7 @@ pos_counts <- signal_stab %>%
 ggplot(pos_counts) +
   geom_bar(aes(x = pos, y = n), stat = "identity") +
   coord_flip() +
-  scale_x_reverse() +
+  scale_x_reverse(breaks = seq(0, 1100, by = 100)) +
   xlab("TYK2 Position") +
   ylab("Number of\nSignaling-Only\nLOF Variants")
 ```

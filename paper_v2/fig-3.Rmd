@@ -14,31 +14,28 @@ aa_order <- c("G","A","P","K","H",
               "Y","W","F","Q","N")
 
 source("../src/model_utils.R")
+
+plot_chemical_footprint <- function(data) {
+
+    to_return <- data %>%
+        ggplot(aes(text = str_c(pos, aa))) +
+        geom_tile(aes(x = as.factor(pos),
+                      y = fct_rev(aa),
+                      fill = `FDR < 0.01`)) +
+        scale_fill_manual(values = colors) +
+        xlab("Position") + ylab("") +
+        facet_grid(scale = "free_x",
+                   space = "free")
+
+    return(to_return)
+}
 ```
 
-### Drug Resistance
-
-```{r bms-drug-resist-1, fig.width = 15, fig.height = 5}
-bms_resist_all <- contrast_sumstats %>%
-    filter(grepl("BMS", condition)) %>%
-    mutate(assay = factor(assay, levels = c("assay1", "assay2", "assay3")))
-
-ggplot(bms_resist_all) +
-    geom_hline(yintercept = -log10(0.01), color = "red") +
-    geom_point(aes(x = log2Contrast,
-                   y = -log10(fdr_contrast),
-                   color = if_else(-log10(fdr_contrast) > -log10(0.01), "red", "black")),
-               size = 2) +
-    xlab("Log2 Fold Change") + ylab("-log10(FDR)") +
-    scale_color_identity() +
-    ggtitle("IFN-alpha + BMS-986202, Normalized to Untreated") +
-    facet_wrap(~assay + condition, nrow = 1)
-```
+### BMS-986202 Drug Resistance
 
 ```{r bms-drug-resist-2, fig.width = 8, fig.height = 8}
 bms_resist <- contrast_sumstats %>%
-    filter(assay == "assay1",
-           condition == "IFNalpha100+BMS-986202_100")
+    filter(assay == "assay1", condition == "IFNalphaWithDrug_100")
 
 ggplot(bms_resist) +
     geom_hline(yintercept = -log10(0.01), color = "red") +
@@ -76,44 +73,36 @@ sumstats_resist <- contrast_sumstats %>%
           aa = if_else(aa %in% c("*", "X"), "*", aa),
           aa = factor(aa, levels = c("WT", aa_order)))
 
-sig_vars_resist <- sumstats_resist %>% filter(`FDR < 0.01` != "Neither") %>% pull(pos) %>% unique()
-prepped_data_resist <- sumstats_resist %>%
-    filter(pos %in% sig_vars_resist)
+sig_positions_resist <- sumstats_resist %>% filter(`FDR < 0.01` != "Neither") %>% pull(pos) %>% unique()
+prepped_data_resist <- sumstats_resist %>% filter(pos %in% sig_positions_resist)
 names(prepped_data_resist) <- c("pos", "aa", "Z_BMS", "Z_ZASO",
                                 "FDR_BMS", "FDR_ZASO", "FDR < 0.01")
 
-positions <- prepped_data_resist %>%
-    pull(pos) %>%
-    unique()
+plot_chemical_footprint(prepped_data_resist)
+```
 
-missing_variants <- expand.grid("pos" = positions,
-                                "aa" = aa_order) %>%
-    filter(pos %in% prepped_data_resist$pos) %>%
-    filter(!str_c(pos, aa) %in% str_c(prepped_data_resist$pos, prepped_data_resist$aa)) %>%
-    mutate("FDR < 0.01" = "Neither") %>%
-    distinct()
-
-prepped_data_resist %>%
-    bind_rows(missing_variants) %>%
-    ggplot(aes(text = str_c(pos, aa))) +
-        geom_tile(aes(x = as.factor(pos),
-                      y = fct_rev(aa),
-                      fill = `FDR < 0.01`), color = "black") +
-        scale_fill_manual(values = colors) +
-        xlab("Position") + ylab("") +
-        facet_grid(scale = "free_x",
-                   space = "free")
+```{r fig-3-resist-scatter, fig.width = 7, fig.height = 6}
+ggplot(sumstats_resist) +
+    geom_point(aes(x = `statistic_contrast_IFNalpha+BMS-986202_1e-06`,
+                   y = `statistic_contrast_IFNalpha+Zasocitinib_1e-06`,
+                   color = `FDR < 0.01`,
+                   size = if_else(`FDR < 0.01` == "Neither", 1, 2),
+                   alpha = if_else(`FDR < 0.01` == "Neither", 0.3, 1))) +
+    scale_color_manual(values = colors) +
+    scale_size_identity() +
+    scale_alpha_identity() +
+    xlab("Z-statistic BMS-986202") + ylab("Z-statistic Zasocitinib") +
+    ggtitle("Drug Resistance: BMS-986202 vs Zasocitinib")
 ```
 
 ```{r fig-3-potentiate, fig.width = 13, fig.height = 8}
-sumstats_potentiate <- assay3
 bms_poten <- compute_difference(test = "IFNalpha100+BMS-986202_2e-08",
                                 control = "IFNalpha100_0",
-                                sumstats_potentiate) 
+                                assay3) 
 
 zaso_poten <- compute_difference(test = "IFNalpha100+Zasocitinib_7e-09",
                                 control = "IFNalpha100_0",
-                                sumstats_potentiate) 
+                                assay3) 
 
 sumstats_potentiate <- bind_rows(bms_poten, zaso_poten) %>%
     mutate(statistic = log2FoldChange / log2StdError,
@@ -132,29 +121,24 @@ sumstats_potentiate <- bind_rows(bms_poten, zaso_poten) %>%
                                  `FDR < 0.01`),
            aa = factor(aa, levels = aa_order))
 
-sig_vars_potentiate <- sumstats_potentiate %>% filter(`FDR < 0.01` != "Neither") %>% pull(pos) %>% unique()
-prepped_data_potentiate <- sumstats_potentiate %>% filter(pos %in% sig_vars_potentiate)
-names(prepped_data_potentiate) <- names(prepped_data_resist)
+sig_positions_potentiate <- sumstats_potentiate %>% filter(`FDR < 0.01` != "Neither") %>% pull(pos) %>% unique()
+prepped_data_potentiate <- sumstats_potentiate %>% filter(pos %in% sig_positions_potentiate)
+names(prepped_data_potentiate)<- c("pos", "aa", "Z_BMS", "Z_ZASO",
+                                   "FDR_BMS", "FDR_ZASO", "FDR < 0.01")
 
-positions <- prepped_data_potentiate %>%
-    pull(pos) %>%
-    unique()
+plot_chemical_footprint(prepped_data_potentiate)
+```
 
-missing_variants <- expand.grid("pos" = positions,
-                                "aa" = aa_order) %>%
-    filter(pos %in% prepped_data_potentiate$pos) %>%
-    filter(!str_c(pos, aa) %in% str_c(prepped_data_potentiate$pos, prepped_data_potentiate$aa)) %>%
-    mutate("FDR < 0.01" = "Neither") %>%
-    distinct()
-
-prepped_data_potentiate %>%
-    bind_rows(missing_variants) %>%
-    ggplot(aes(text = str_c(pos, aa))) +
-        geom_tile(aes(x = as.factor(pos),
-                      y = fct_rev(aa),
-                      fill = `FDR < 0.01`), color = "black") +
-        scale_fill_manual(values = colors) +
-        xlab("Position") + ylab("") +
-        facet_grid(scale = "free_x",
-                   space = "free")
+```{r fig-3-potentiate-scatter, fig.width = 7, fig.height = 6}
+ggplot(sumstats_potentiate) +
+    geom_point(aes(x = `statistic_IFNalpha100+BMS-986202`,
+                   y = `statistic_IFNalpha100+Zasocitinib`,
+                   color = `FDR < 0.01`,
+                   size = if_else(`FDR < 0.01` == "Neither", 1, 2),
+                   alpha = if_else(`FDR < 0.01` == "Neither", 0.3, 1))) +
+    scale_color_manual(values = colors) +
+    scale_size_identity() +
+    scale_alpha_identity() +
+    xlab("Z-statistic BMS-986202") + ylab("Z-statistic Zasocitinib") +
+    ggtitle("Drug Potentiation: BMS-986202 vs Zasocitinib")
 ```

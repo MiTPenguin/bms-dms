@@ -1,7 +1,7 @@
 ---
 title: "Octant-BMS TYK2 Manuscript Data Visuals"
 author: "Nathan Abell and Conor Howard"
-date: 'May 17, 2025'
+date: 'May 18, 2025'
 output: github_document
 ---
 
@@ -41,9 +41,7 @@ output: github_document
 
 
 
-### Drug Resistance
-
-![plot of chunk bms-drug-resist-1](./fig-3/bms-drug-resist-1-1.png)
+### BMS-986202 Drug Resistance
 
 ![plot of chunk bms-drug-resist-2](./fig-3/bms-drug-resist-2-1.png)
 
@@ -51,7 +49,11 @@ output: github_document
 
 ![plot of chunk fig-3-resist](./fig-3/fig-3-resist-1.png)
 
+![plot of chunk fig-3-resist-scatter](./fig-3/fig-3-resist-scatter-1.png)
+
 ![plot of chunk fig-3-potentiate](./fig-3/fig-3-potentiate-1.png)
+
+![plot of chunk fig-3-potentiate-scatter](./fig-3/fig-3-potentiate-scatter-1.png)
 
 # Supplementary Figure 2
 

@@ -8,8 +8,8 @@ aa_order <- c("*", "P", "G", "A", "M",
     "C", "Q", "N", "Y", "W",
     "F", "E", "D", "K", "H", "R")
 
-ifna_signaling <- assay1 %>%
-    filter(condition == "IFNalpha_100") %>%
+ifna_signaling <- contrast_sumstats %>%
+    filter(condition == "IFNalpha100_0", assay == "assay3") %>%
     mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "*", aa),
            aa = factor(aa, levels = aa_order))
 

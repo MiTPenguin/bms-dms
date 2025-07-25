@@ -107,6 +107,7 @@ A <- fig_data %>%
   ) +
   scale_y_continuous(labels = scales::percent) +
   scale_fill_manual("", values = c("#DC5E65", "lightgrey", "#0072B2")) +
+  theme(legend.position = "top") +
   custom_theme
 ```
 
@@ -215,12 +216,14 @@ D1 <- spikeins_join %>%
   mutate(condition = gsub("IFNa", "IFNa\n", condition)) %>%
   ggplot() +
   geom_vline(xintercept = 0) +
-  geom_hline(yintercept = 26.5,
-    color = "#DC5E65",
-    linetype = "dashed") +
-  geom_hline(yintercept = 15.5,
-    color = "#0072B2",
-    linetype = "dashed") +
+  annotate(xmin = -Inf, xmax = Inf, ymin = 26.5, ymax = Inf,
+    fill = "#DC5E65",
+    geom = "rect",
+    alpha = 0.2) +
+  annotate(xmin = -Inf, xmax = Inf, ymin = 15.5, ymax = -Inf,
+    fill = "#0072B2",
+    geom = "rect",
+    alpha = 0.2) +
   geom_pointrange(
     aes(
       x = effect,

@@ -107,7 +107,24 @@ A <- fig_data %>%
   ) +
   scale_y_continuous(labels = scales::percent) +
   scale_fill_manual("", values = c("#DC5E65", "lightgrey", "#0072B2")) +
-  custom_theme
+  custom_theme +
+  theme(
+    axis.title = element_text(size = rel(0.6)),
+    axis.text.x = element_text(angle = 0, hjust = 0.5),
+    panel.grid.major.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    legend.box = element_blank(),
+    legend.position = "top",
+    legend.key = element_rect(color = NA),
+    legend.margin = margin(0,0,-25,0),
+    legend.box.spacing = unit(0.001, "npc"),
+    legend.title = element_blank(),
+    legend.text = element_text(size = rel(0.5)),
+    legend.key.height = unit(0.01, "npc"),
+    strip.text.y = element_blank(),
+    axis.text= element_text(size = unit(6, "points")),
+    plot.tag.position = c(0.01, 0.9)
+  )
 ```
 
 ### Panel B
@@ -203,6 +220,7 @@ C <- am_df %>%
     panel.grid.major.x = element_blank(),
     axis.title = element_text(size = rel(0.6)),
     strip.text.x = element_text(size = rel(0.7)),
+    strip.background = element_blank(),
     plot.tag.position = c(0.01, 0.98)
   )
 ```
@@ -215,12 +233,14 @@ D1 <- spikeins_join %>%
   mutate(condition = gsub("IFNa", "IFNa\n", condition)) %>%
   ggplot() +
   geom_vline(xintercept = 0) +
-  geom_hline(yintercept = 26.5,
-    color = "#DC5E65",
-    linetype = "dashed") +
-  geom_hline(yintercept = 15.5,
-    color = "#0072B2",
-    linetype = "dashed") +
+  annotate(xmin = -Inf, xmax = Inf, ymin = 26.5, ymax = Inf,
+    fill = "#DC5E65",
+    geom = "rect",
+    alpha = 0.2) +
+  annotate(xmin = -Inf, xmax = Inf, ymin = 15.5, ymax = -Inf,
+    fill = "#0072B2",
+    geom = "rect",
+    alpha = 0.2) +
   geom_pointrange(
     aes(
       x = effect,
@@ -249,20 +269,24 @@ D1 <- spikeins_join %>%
     axis.text.x = element_text(angle = 0, hjust = 0.6,
                                size = unit(6, "points")),
     panel.grid.major.y = element_blank(),
-    plot.tag.position = c(0.01, 0.98)
+    plot.tag.position = c(0.01, 0.98),
+    strip.background = element_blank()
   ) +
   facet_grid2(. ~ condition, scales = "fixed")
 
 D2 <- spikeins_join %>% 
-  filter(condition == "Abundance") %>% 
+  filter(condition == "Abundance") %>%
+  mutate(condition = "Abundance\n") %>%
   ggplot() +
   geom_vline(xintercept = 0) +
-  geom_hline(yintercept = 26.5,
-    color = "#DC5E65",
-    linetype = "dashed") +
-  geom_hline(yintercept = 15.5,
-    color = "#0072B2",
-    linetype = "dashed") +
+  annotate(xmin = -Inf, xmax = Inf, ymin = 26.5, ymax = Inf,
+    fill = "#DC5E65",
+    geom = "rect",
+    alpha = 0.2) +
+  annotate(xmin = -Inf, xmax = Inf, ymin = 15.5, ymax = -Inf,
+    fill = "#0072B2",
+    geom = "rect",
+    alpha = 0.2) +
   geom_pointrange(
     aes(
       x = effect,
@@ -293,7 +317,8 @@ D2 <- spikeins_join %>%
     axis.text.x = element_text(angle = 0, hjust = 0.6,
                                size = unit(6, "points")),
     panel.grid.major.y = element_blank(),
-    plot.tag.position = c(0.01, 0.98)
+    plot.tag.position = c(0.01, 0.98),
+    strip.background = element_blank()
   ) +
   facet_grid2(. ~ condition)
 
@@ -324,7 +349,7 @@ counts <- clinvar_df %>%
 E <- clinvar_df %>% 
   left_join(counts, by = "class") %>% 
   arrange(class) %>%
-  mutate(classifier_value_count = fct_inorder(paste0(class, " (", format(count/2, big.mark = ",", trim = TRUE),")"))) %>%
+  mutate(classifier_value_count = fct_inorder(paste0(class, "\n(", format(count/2, big.mark = ",", trim = TRUE),")"))) %>%
   ggplot(aes(
     x = statistic,
     y = classifier_value_count,
@@ -351,7 +376,8 @@ E <- clinvar_df %>%
     axis.text= element_text(size = unit(6, "points")),
     strip.text.y = element_text(angle = 0, size = unit(8, "points")),
     axis.title = element_text(size = unit(10, "points")),
-    plot.tag.position = c(0.01, 0.98)
+    plot.tag.position = c(0.01, 0.98),
+    strip.background = element_blank()
   )
 ```
 

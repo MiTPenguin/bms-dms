@@ -220,6 +220,7 @@ C <- am_df %>%
     panel.grid.major.x = element_blank(),
     axis.title = element_text(size = rel(0.6)),
     strip.text.x = element_text(size = rel(0.7)),
+    strip.background = element_blank(),
     plot.tag.position = c(0.01, 0.98)
   )
 ```
@@ -268,7 +269,8 @@ D1 <- spikeins_join %>%
     axis.text.x = element_text(angle = 0, hjust = 0.6,
                                size = unit(6, "points")),
     panel.grid.major.y = element_blank(),
-    plot.tag.position = c(0.01, 0.98)
+    plot.tag.position = c(0.01, 0.98),
+    strip.background = element_blank()
   ) +
   facet_grid2(. ~ condition, scales = "fixed")
 
@@ -315,7 +317,8 @@ D2 <- spikeins_join %>%
     axis.text.x = element_text(angle = 0, hjust = 0.6,
                                size = unit(6, "points")),
     panel.grid.major.y = element_blank(),
-    plot.tag.position = c(0.01, 0.98)
+    plot.tag.position = c(0.01, 0.98),
+    strip.background = element_blank()
   ) +
   facet_grid2(. ~ condition)
 
@@ -373,7 +376,8 @@ E <- clinvar_df %>%
     axis.text= element_text(size = unit(6, "points")),
     strip.text.y = element_text(angle = 0, size = unit(8, "points")),
     axis.title = element_text(size = unit(10, "points")),
-    plot.tag.position = c(0.01, 0.98)
+    plot.tag.position = c(0.01, 0.98),
+    strip.background = element_blank()
   )
 ```
 

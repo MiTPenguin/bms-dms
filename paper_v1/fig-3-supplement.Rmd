@@ -273,7 +273,8 @@ D1 <- spikeins_join %>%
   facet_grid2(. ~ condition, scales = "fixed")
 
 D2 <- spikeins_join %>% 
-  filter(condition == "Abundance") %>% 
+  filter(condition == "Abundance") %>%
+  mutate(condition = "Abundance\n") %>%
   ggplot() +
   geom_vline(xintercept = 0) +
   annotate(xmin = -Inf, xmax = Inf, ymin = 26.5, ymax = Inf,

@@ -1,7 +1,7 @@
 ---
 title: "Octant-BMS TYK2 Manuscript Data Visuals"
 author: "Nathan Abell and Conor Howard"
-date: 'May 18, 2025'
+date: 'September 05, 2025'
 output: github_document
 ---
 
@@ -66,6 +66,13 @@ output: github_document
 
 
 
+```
+## Error in library(ggh4x): there is no package called 'ggh4x'
+```
+
+```
+## Error in library(ggrastr): there is no package called 'ggrastr'
+```
 
 ### Panel A
 
@@ -74,17 +81,40 @@ output: github_document
 ### Panel B
 
 
+```
+## Error in facet_grid2(condition ~ ., scales = "fixed"): could not find function "facet_grid2"
+```
 
 ### Panel C
 
+```
+## Error in geom_quasirandom_rast(size = 0.5, show.legend = FALSE): could not find function "geom_quasirandom_rast"
+```
 
 ### Panel D
 
 
+```
+## Error in facet_grid2(. ~ condition, scales = "fixed"): could not find function "facet_grid2"
+```
+
+```
+## Error in facet_grid2(. ~ condition): could not find function "facet_grid2"
+```
+
+```
+## Error: object 'D1' not found
+```
 
 ### Panel E
 
+```
+## Error in geom_quasirandom_rast(orientation = "y", size = 0.5, width = 0.2, : could not find function "geom_quasirandom_rast"
+```
 
 ### Composite
 
-![plot of chunk supp-fig-3](./fig-3-supplement/supp-fig-3-1.png)
+
+```
+## Error: object 'B' not found
+```

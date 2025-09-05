@@ -85,15 +85,15 @@ spikeins_join <- spikeins %>%
   inner_join(fig_data, by = c("pos", "aa")) %>%
   arrange(class, pos) %>%
   mutate(class = factor(class, levels = c("GOF", "Unknown", "LOF")),
-    significance = factor(if_else(p.adj < 0.01, "FDR < 1%", "not significant")))
+    significance = factor(if_else(p.adj < 0.05, "FDR < 5%", "not significant")))
 ```
 
 ### Panel A
 
 ```{r supp-fig-3-A, fig.width=5, fig.height=5}
 A <- fig_data %>%
-  mutate(status = case_when(statistic < 0 & p.adj < 0.01 ~ "LoF",
-    statistic > 0 & p.adj < 0.01 ~ "GoF",
+  mutate(status = case_when(statistic < 0 & p.adj < 0.05 ~ "LoF",
+    statistic > 0 & p.adj < 0.05 ~ "GoF",
     .default = "no effect"
   )) %>%
   mutate(status = factor(status, levels = c("GoF", "no effect", "LoF"))) %>%

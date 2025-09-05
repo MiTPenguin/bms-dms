@@ -9,6 +9,7 @@ Welcome! This repository contains analyses, code, and summary statistics related
 ├── fastq
 ├── mapped_counts
 ├── paper
+├── sra
 ├── src
 └── sumstats
 ```
@@ -19,18 +20,18 @@ To build an environment with all utilities installed, execute the following to c
 
 ```
 cd docker
-docker build -t analysis-image .
+docker build -t tyk2-dms-image .
 ```
 
 Then, run an instance of the image, enter the initiated container, and open the nix environment:
 
 ```
 docker run --rm -dit \
-  --name analysis-container \
+  --name tyk2-dms-container \
   -v ~/bms-dms:/bms-dms \
-  analysis-image:latest
+  tyk2-dms-image:latest
 
-docker exec -it analysis-container bash
+docker exec -it tyk2-dms-container bash
 
 nix develop
 ```

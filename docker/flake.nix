@@ -32,6 +32,8 @@
           future
           future_callr
           ggbeeswarm
+          ggh4x
+          ggrastr
           ggrepel
           glmmTMB
           IRkernel

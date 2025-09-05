@@ -54,19 +54,19 @@ scale_fill_scico_mid <- function(..., mid = 0, alpha = NULL, begin = 0, end = 1,
 # Common Data Processing
 
 ```{r loading}
-assay1 <- read_tsv("../sumstats/archive/TYK2-run3-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
+assay1 <- read_tsv("../sumstats/TYK2-run3-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
   mutate(assay = "assay1") %>% select(-version) %>%
   mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "Stop", aa))
 
-assay2 <- read_tsv("../sumstats/archive/TYK2-run4-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
+assay2 <- read_tsv("../sumstats/TYK2-run4-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
   mutate(assay = "assay2") %>% select(-version) %>%
   mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "Stop", aa))
 
-assay3 <- read_tsv("../sumstats/archive/TYK2-run7-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
+assay3 <- read_tsv("../sumstats/TYK2-run7-combined-cleaned.sumstats.tsv", show_col_types = FALSE) %>%
   mutate(assay = "assay3") %>% select(-version) %>%
   mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "Stop", aa))
 
-flow_data <- read_tsv("../sumstats/archive/TYK2-FLOW-flow-cleaned.midpoints.tsv", show_col_types = FALSE) %>%
+flow_data <- read_tsv("../sumstats/TYK2-FLOW-flow-cleaned.midpoints.tsv", show_col_types = FALSE) %>%
   mutate(aa = if_else(aa %in% c("X", "Stop", "*"), "Stop", aa))
 
 assay_data <- bind_rows(assay1, assay2, assay3)  %>%
@@ -91,7 +91,7 @@ contrast_sumstats <- sumstats %>%
          fdr_contrast = p.adjust(p.value_contrast, method = "BH")) %>%
   ungroup()
 
-write_tsv(contrast_sumstats, "../sumstats/archive/TYK2.contrast.tsv")
+write_tsv(contrast_sumstats, "../sumstats/TYK2.contrast.tsv")
 ```
 
 # Figure 1

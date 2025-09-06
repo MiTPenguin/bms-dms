@@ -35,3 +35,7 @@ docker exec -it tyk2-dms-container bash
 
 nix develop
 ```
+
+### Other Supporting Data
+  -  [Zenodo 15347448](https://zenodo.org/records/15347448): Oligo-barcode maps and raw barcode counts [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15347448.svg)](https://doi.org/10.5281/zenodo.15347448)
+  -  [SRA BioProject PRJNA1291213](https://dataview.ncbi.nlm.nih.gov/object/PRJNA1291213): Raw FASTQ files

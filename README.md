@@ -1,6 +1,10 @@
 # TYK2 Deep Mutational Scanning by Octant and Bristol Meyers Squibb
 
-Welcome! This repository contains analyses, code, and summary statistics related to and reproducing the manuscript [Deep mutational scanning to characterize the mechanistic role of TYK2 in immune signaling and disease](https://www.biorxiv.org/content/10.1101/2025.10.11.681520v1). This repository contains the following:
+Welcome! This repository contains analyses, code, and summary statistics related to and reproducing the manuscript [Deep mutational scanning to characterize the mechanistic role of TYK2 in immune signaling and disease](https://www.biorxiv.org/content/10.1101/2025.10.11.681520v1).
+
+<center> <img src="./aux/header.jpeg" width="500"/> </center>
+
+This repository contains the following:
 
 ```
 ├── aux
@@ -37,5 +41,6 @@ nix develop
 ```
 
 ### Other Supporting Data
-  -  [Zenodo 15347448](https://zenodo.org/records/15347448): Oligo-barcode maps and raw barcode counts [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15347448.svg)](https://doi.org/10.5281/zenodo.15347448)
+  -  [Biorxiv DOI 2025.10.11.681520](https://doi.org/10.1101/2025.10.11.681520): Manuscript pre-print
   -  [SRA BioProject PRJNA1291213](https://dataview.ncbi.nlm.nih.gov/object/PRJNA1291213): Raw FASTQ files
+  -  [Zenodo 15347448](https://zenodo.org/records/15347448): Oligo-barcode maps and raw barcode counts [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15347448.svg)](https://doi.org/10.5281/zenodo.15347448)

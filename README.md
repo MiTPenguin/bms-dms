@@ -2,7 +2,7 @@
 
 Welcome! This repository contains analyses, code, and summary statistics related to and reproducing the manuscript [Deep mutational scanning to characterize the mechanistic role of TYK2 in immune signaling and disease](https://www.biorxiv.org/content/10.1101/2025.10.11.681520v1).
 
-<center> <img src="./aux/header.jpeg" width="500"/> </center>
+<p align="center"> <img src="./aux/header.jpeg" width="500"/> </p>
 
 This repository contains the following:
 

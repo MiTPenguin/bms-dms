@@ -1,6 +1,6 @@
 # TYK2 Deep Mutational Scanning by Octant and Bristol Meyers Squibb
 
-Welcome! This repository contains analyses, code, and summary statistics related to and reproducing the manuscript `Deep mutational scanning to characterize the mechanistic role of TYK2 in immune signaling and disease`. This repository contains the following:
+Welcome! This repository contains analyses, code, and summary statistics related to and reproducing the manuscript [Deep mutational scanning to characterize the mechanistic role of TYK2 in immune signaling and disease](https://www.biorxiv.org/content/10.1101/2025.10.11.681520v1). This repository contains the following:
 
 ```
 ├── aux

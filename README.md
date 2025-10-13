@@ -42,5 +42,5 @@ nix develop
 
 ### Other Supporting Data
   -  [Biorxiv DOI 2025.10.11.681520](https://doi.org/10.1101/2025.10.11.681520): Manuscript pre-print
-  -  [SRA BioProject PRJNA1291213](https://dataview.ncbi.nlm.nih.gov/object/PRJNA1291213): Raw FASTQ files
+  -  [SRA BioProject PRJNA1291213](https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA1291213): Raw FASTQ files
   -  [Zenodo 15347448](https://zenodo.org/records/15347448): Oligo-barcode maps and raw barcode counts [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15347448.svg)](https://doi.org/10.5281/zenodo.15347448)

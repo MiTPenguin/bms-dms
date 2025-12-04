@@ -1,0 +1,2 @@
+mv_id,rsid,mv_score,chrom_hg19,pos_hg19,ref_hg19,alt_hg19,exac_af,gnomad_exome_af,exac_rf,gnomad_exome_rf,clinvar_significance,clinvar_review_status,clinvar_disease_name,clinvar_preferred_name,clinvar_accession
+chr19:g.10472943C>T,rs1355927286,13.914732,19,10472943,C,T,NA,0,NA,1,NA,NA,NA,NA,NA

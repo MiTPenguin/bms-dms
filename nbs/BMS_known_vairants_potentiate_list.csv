@@ -1,0 +1,2 @@
+mv_id,rsid,mv_score,chrom_hg19,pos_hg19,ref_hg19,alt_hg19,exac_af,gnomad_exome_af,exac_rf,gnomad_exome_rf,clinvar_significance,clinvar_review_status,clinvar_disease_name,clinvar_preferred_name,clinvar_accession
+chr19:g.10472598C>T,rs140594440,6.3029385,19,10472598,C,T,0,0,1,1,Uncertain significance,"criteria provided, multiple submitters, no conflicts",Immunodeficiency 35 (IMD35),NM_003331.5(TYK2):c.1807G>A (p.Val603Met),RCV000527931

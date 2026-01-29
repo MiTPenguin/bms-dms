@@ -44,3 +44,11 @@ nix develop
   -  [Biorxiv DOI 2025.10.11.681520](https://doi.org/10.1101/2025.10.11.681520): Manuscript pre-print
   -  [SRA BioProject PRJNA1291213](https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA1291213): Raw FASTQ files
   -  [Zenodo 15347448](https://zenodo.org/records/15347448): Oligo-barcode maps and raw barcode counts [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15347448.svg)](https://doi.org/10.5281/zenodo.15347448)
+
+
+### Addition for Takeda
+
+* `nbs`: notebooks containing work specifically for Takeda analysis
+  - `01_data_exploration.ipynb`: recreate plots and data set used in the bioarchive paper
+  - `02_incroporate_phewas.ipynb`: pull additional phewas data and layer it on top of data used in the bioarchive paper,
+  resulting in csv outputs in the same `nbs` folder.
